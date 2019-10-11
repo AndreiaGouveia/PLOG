@@ -1,22 +1,22 @@
 initialBoard(
-[['*','*','*','*'],['*','*','*','*'],['*','*','*','*'],['*','*','*','*']]).
+                [['*','*','*','*'],['*','*','*','*'],['*','*','*','*'],['*','*','*','*']]).
 
 printBoard(Board):-write('  ----------------') , printLines(Board).
 
 printLines([]):-
-nl.
+        nl.
 
 printLines([H|T]):-
-nl,
-printColumn(H),
-nl,
-write(' |---|---|---|---|'),
-printLines(T).
+        nl,
+        printColumn(H),
+        nl,
+        write(' |---|---|---|---|'),
+        printLines(T).
 
 printColumn([]):-
-write(' |').
+        write(' |').
 
 printColumn([H|T]):-
-write(' | '),
-write(H),
-printColumn(T).
+        write(' | '),
+        write(H),
+        printColumn(T).
