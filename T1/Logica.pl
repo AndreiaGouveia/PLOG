@@ -14,4 +14,21 @@ getY(Y):-
 
 getCoord(X,Y):-
 	getX(X),
-	getY(Y).
+	getY(Y),
+	initialBoard(Board),
+	validMove(X,Y,Board).
+
+validMove(0,0,H):-
+	H==empty.
+
+validMove(1,0,[H|T]):-
+	validMove(0,0,H).
+
+validMove(X,0,[H|T]):-
+	validMove(X-1,0,T).
+
+validMove(X,1,[H|T]):-
+	validMove(X,0,H).
+
+validMove(X,Y,[H|T]):-
+	validMove(X,Y-1,T).
