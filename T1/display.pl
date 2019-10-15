@@ -2,8 +2,8 @@ initialBoard(
                 [[empty,empty,empty,empty],[empty,empty,empty,empty],[empty,empty,empty,empty],[empty,empty,empty,empty]]).
 
 printBoard(Board):-
-        write('\n    A   B   C   D  '),
-        write('\n  |---|---|---|---|') ,
+        write('\n     a   b   c   d  '),
+        write('\n   |---|---|---|---|') ,
         printBoard(Board, 1).
 
 piece(empty, V) :- V = '*'.
@@ -22,11 +22,11 @@ printBoard([],_):-
         nl,nl.
 
 printBoard([H|T],Num):-
-        nl,
+        write('\n '),
         write(Num),
         printLine(H),
         nl,
-        write('  |---|---|---|---|'),
+        write('   |---|---|---|---|'),
         Num1 is Num+1,
         printBoard(T,Num1).
 
