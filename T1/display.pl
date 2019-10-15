@@ -1,7 +1,10 @@
 initialBoard(
                 [[empty,empty,empty,empty],[empty,empty,empty,empty],[empty,empty,empty,empty],[empty,empty,empty,empty]]).
 
-printBoard(Board):-write('  ----------------') , printLines(Board).
+printBoard(Board):-
+        write('\nL\\C 1   2   3   4  '),
+        write('\n  |---|---|---|---|') ,
+        printColumns(Board, 1).
 
 piece(empty, V) :- V = '*'.
 piece(coneB, V) :- V ='p'.
@@ -15,21 +18,23 @@ piece(sphereW, V) :- V ='E'.
 
 
 
-printLines([]):-
-        nl.
+printColumns([],_):-
+        nl,nl.
 
-printLines([H|T]):-
+printColumns([H|T],Num):-
         nl,
-        printColumn(H),
+        write(Num),
+        printLine(H),
         nl,
-        write(' |---|---|---|---|'),
-        printLines(T).
+        write('  |---|---|---|---|'),
+        Num1 is Num+1,
+        printColumns(T,Num1).
 
-printColumn([]):-
+printLine([]):-
         write(' |').
 
-printColumn([H|T]):-
+printLine([H|T]):-
         write(' | '),
         piece(H,Piece),
         write(Piece),
-        printColumn(T).
+        printLine(T).
