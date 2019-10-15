@@ -1,20 +1,22 @@
-getX(X):-
+getColumn(X):-
 	repeat,
-	write('O valor de X tem de ser entre 1 e 4\n'),
-	read(X),
-	X=<4,
-	X>=1.
+	write('O valor da coluna tem de ser entre a e d\n'),
+	read(X1),
+	char_code(X1,X2),
+	X2=<100,
+	X2>=97,
+	X is X2-96.
 
-getY(Y):-
+getLine(Y):-
 	repeat,
-	write('O valor de Y tem de ser entre 1 e 4\n'),
+	write('O valor da linha tem de ser entre 1 e 4\n'),
 	read(Y),
 	Y=<4,
 	Y>=1.
 
 getCoord(X,Y):-
-	getX(X),
-	getY(Y),
+	getColumn(X),
+	getLine(Y),
 	initialBoard(Board),%must find way to use global board
 	validMove(X,Y,Board).
 

@@ -18,7 +18,7 @@ menuChoice(_):-
 
 
 displayMainMenu:-
-        write(' ----------------------------------------\n'),
+        write('\n ----------------------------------------\n'),
         write('|                                        |\n'),
         write('|                Quantik                 |\n'),
         write('|                                        |\n'),
