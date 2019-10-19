@@ -1,6 +1,6 @@
 getColumn(X):-
 	repeat,
-	write('O valor da coluna tem de ser entre a e d\n'),
+	write('O valor da coluna tem de ser entre \'a\' e \'d\'\n'),
 	read(X1),
 	char_code(X1,X2),
 	X2=<100,
@@ -14,10 +14,11 @@ getLine(Y):-
 	Y=<4,
 	Y>=1.
 
-getCoord(X,Y):-
+getCoord(X , Y , Board):-
+	write('Insere um valor entre \'a\' a \'d\'\n'),
 	getColumn(X),
+	write('Insere um valor entre 1 a 4\n')
 	getLine(Y),
-	initialBoard(Board),%must find way to use global board
 	validMove(X,Y,Board).
 
 validMove(0,0,H):-
@@ -36,3 +37,10 @@ validMove(X,1,[H|_]):-
 validMove(X,Y,[_|T]):-
 	Y1 is Y-1,
 	validMove(X,Y1,T).
+
+getPlay(Board, Player):-
+	getCoord(X , Y , Board).
+
+
+
+

@@ -6,7 +6,7 @@ menus:-
 
 menuChoice(1):-
         initialBoard(InitialBoard),
-        printBoard(InitialBoard).
+        initGame(InitialBoard , 0).
 
 menuChoice(2):-
         write('Thanks for playing!').
@@ -16,6 +16,18 @@ menuChoice(_):-
         read(Input),
         menuChoice(Input).
 
+initGame(Board , 16):-
+        write('\n Game over!\n'),
+        menus.
+       
+initGame(Board , Counter):-
+        showBoard(white,Board),
+        getPlay(Board , white),
+        Counter1 is Counter + 1,
+        showBoard(black,Board),
+        getPlay(Board , black),
+        Counter2 is Counter1 + 1,
+        initGame(Board , Counter2).
 
 displayMainMenu:-
         write('\n ----------------------------------------\n'),

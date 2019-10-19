@@ -1,11 +1,6 @@
 initialBoard(
                 [[empty,empty,empty,empty],[empty,empty,empty,empty],[empty,empty,empty,empty],[empty,empty,empty,empty]]).
 
-printBoard(Board):-
-        write('\n     a   b   c   d  '),
-        write('\n   |---|---|---|---|') ,
-        printBoard(Board, 1).
-
 piece(empty, V) :- V = '*'.
 piece(coneB, V) :- V ='p'.
 piece(coneW, V) :- V ='P'.
@@ -16,10 +11,24 @@ piece(cylinderW, V) :- V ='L'.
 piece(sphereB, V) :- V ='e'.
 piece(sphereW, V) :- V ='E'.
 
+player(white , V) :- V = 1.
+player(black , V) :- V = 2.
 
+showBoard(Player, Board) :- 
+        player(Player,Num),
+        write( 'It\'s player '),
+        write( Num ),
+        write( 'turn!\n' ),
+        printBoard(Board).
+
+printBoard(Board):-
+        write('\n     a   b   c   d  '),
+        write('\n   |---|---|---|---|') ,
+        printBoard(Board, 1).
 
 printBoard([],_):-
-        nl,nl.
+        nl,
+        nl.
 
 printBoard([H|T],Num):-
         write('\n '),
