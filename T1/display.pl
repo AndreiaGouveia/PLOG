@@ -16,9 +16,9 @@ player(black , V) :- V = 2.
 
 showBoard(Player, Board) :- 
         player(Player,Num),
-        write( 'It\'s player '),
+        write( '\nIt\'s player '),
         write( Num ),
-        write( 'turn!\n' ),
+        write( ' turn!\n' ),
         printBoard(Board).
 
 printBoard(Board):-
