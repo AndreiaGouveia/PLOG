@@ -1,6 +1,18 @@
+% Boards and Pieces
 initialBoard(
                 [[empty,empty,empty,empty],[empty,empty,empty,empty],[empty,empty,empty,empty],[empty,empty,empty,empty]]).
 
+piecesBlack(
+        [cubeB , coneB , cylinderB , sphereB]
+).
+
+piecesWhite(
+        [cubeW , coneW , cylinderW , sphereW]
+).
+
+
+
+% Tradution
 piece(empty, V) :- V = '*'.
 piece(coneB, V) :- V ='p'.
 piece(coneW, V) :- V ='P'.
@@ -14,12 +26,17 @@ piece(sphereW, V) :- V ='E'.
 player(white , V) :- V = 1.
 player(black , V) :- V = 2.
 
-showBoard(Player, Board) :- 
+
+
+% Display functions 
+
+showBoard(Player, Board, PlayerPieces) :- 
         player(Player,Num),
         write( 'It\'s player '),
         write( Num ),
         write( 'turn!\n' ),
-        printBoard(Board).
+        printBoard(Board),
+        showPieces(PlayerPieces).
 
 printBoard(Board):-
         write('\n     a   b   c   d  '),
@@ -47,3 +64,7 @@ printLine([H|T]):-
         piece(H,Piece),
         write(Piece),
         printLine(T).
+
+showPieces(PlayerPieces ):-
+        write('\n Player\'s available pieces: \n'),
+        printLine(PlayerPieces).
