@@ -32,7 +32,7 @@ player(black , V) :- V = 2.
 
 showBoard(Player, Board, PlayerPieces) :- 
         player(Player,Num),
-        write( 'It\'s player '),
+        write( '\nIt\'s player '),
         write( Num ),
         write( 'turn!\n' ),
         printBoard(Board),

@@ -16,9 +16,7 @@ getLine(Y):-
 	Y>=1.
 
 getCoord(X , Y , Board):-
-	write('Insere um valor entre \'a\' a \'d\'\n'),
 	getColumn(X),
-	write('Insere um valor entre 1 a 4\n'),
 	getLine(Y),
 	validMove(X,Y,Board).
 
