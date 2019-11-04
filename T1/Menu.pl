@@ -1,36 +1,34 @@
-menus:-
+menus:- % First Menu
         displayMainMenu,
         nl,
         read(Input),
         menuChoice(Input).
 
-menuChoice(1):-
+menuChoice(1):- % start game
         initialBoard(InitialBoard),
         piecesBlack(BlackPieces),
         piecesWhite(WhitePieces),
-        initGame(InitialBoard , 0, WhitePieces , BlackPieces).
+        displayGameMenu,
+        nl,
+        read(Input),
+        gameChoice(Input , InitialBoard , BlackPieces , WhitePieces).
 
-menuChoice(2):-
+menuChoice(2):- % exitgame
         write('Thanks for playing!').
 
-menuChoice(_):-
+menuChoice(_):- % invalid input
         write('Must choose between 1 or 2'),
         read(Input),
         menuChoice(Input).
 
-initGame(Board , 16):-
-        write('\n Game over!\n'),
-        menus.
-       
-initGame(Board , Counter , WhitePieces, BlackPieces):-
-        showBoard(white,Board, WhitePieces),
-        getPlay(Board , white , NewBoard),
-        Counter1 is Counter + 1,
-        showBoard(black,NewBoard,BlackPieces),
-        getPlay(NewBoard , black , NewBoard1),
-        Counter2 is Counter1 + 1,
-        initGame(NewBoard1 , Counter2).
 
+% ========== Init game option ==================
+gameChoice(1 , InitialBoard , BlackPieces , WhitePieces):- initGame(InitialBoard , 0, WhitePieces , BlackPieces) , menus. % person vs person
+gameChoice(2 , InitialBoard , BlackPieces , WhitePieces):- write('\n Not yet implemented! \n') , menus. % person vs pc
+gameChoice(3 , InitialBoard , BlackPieces , WhitePieces):- write('\n Not yet implemented! \n') , menus. % pc vs pc
+gameChoice(_ , InitialBoard , BlackPieces , WhitePieces):- menus. % invalid input
+
+% ============= Menus Display =====================
 displayMainMenu:-
         write('\n ----------------------------------------\n'),
         write('|                                        |\n'),
@@ -44,3 +42,18 @@ displayMainMenu:-
         write('|                                        |\n'),
         write('|                                        |\n'),
         write(' ----------------------------------------\n').
+
+displayGameMenu:-
+        write('\n ------------------------------------------\n'),
+        write('|                                            |\n'),
+        write('|                   Quantik                  |\n'),
+        write('|                                            |\n'),
+        write('|                                            |\n'),
+        write('|                                            |\n'),
+        write('|         Options:                           |\n'),
+        write('|                    1- Person vs Person     |\n'),
+        write('|                    2- Computer vs Person   |\n'),
+        write('|                    3- Computer vs Computer |\n'),
+        write('|                                            |\n'),
+        write('|                                            |\n'),
+        write(' --------------------------------------------\n').

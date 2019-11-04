@@ -1,7 +1,7 @@
-% get coords
+% === get coords ===
 getColumn(X):-
 	repeat,
-	write('O valor da coluna tem de ser entre \'a\' e \'d\'\n'),
+	write('\n O valor da coluna tem de ser entre \'a\' e \'d\' \n'),
 	read(X1),
 	char_code(X1,X2),
 	X2=<100,
@@ -10,7 +10,7 @@ getColumn(X):-
 
 getLine(Y):-
 	repeat,
-	write('O valor da linha tem de ser entre 1 e 4\n'),
+	write('\n O valor da linha tem de ser entre 1 e 4 \n'),
 	read(Y),
 	Y=<4,
 	Y>=1.
@@ -21,7 +21,7 @@ getCoord(X , Y , Board):-
 	validMove(X,Y,Board).
 
 
-% check i f move is valid
+% ===checks if move is valid ===
 validMove(0,0,H):-
 	H=='empty'.
 
@@ -39,13 +39,19 @@ validMove(X,Y,[_|T]):-
 	Y1 is Y-1,
 	validMove(X,Y1,T).
 
-% ask fo r piece
+% === checks if piece is valid 
+
+validPiece(Piece):- 
+
+
+% === ask for piece ===
 getPiece(Piece):-
 	repeat,
 	write('\n Choose a piece \n'),% add a show pieces
-	read(Piece).
+	read(Piece),
+	validPiece(Piece).
 
-% functions to insert piece in board
+%===  functions to insert piece in board ===
 replace([] , X , Y , Piece , []).
 
 replace([B|Bt] , 1 , Y , Piece, [N|Nt]):-
@@ -61,13 +67,12 @@ replace_column( [] , X , Piece , []).
 replace_column( [_|Cs] , 1 , Piece , [Piece|Cs] ) :-
 	replace_column(Cs , 1 , Piece , Cs).
 
-replace_column( [C|Cs] , Y , Piece , [C|Rs] ) :- % otherwise,
-  Y1 is Y-1 ,                                % - we decrement it
-  replace_column( Cs , Y1 , Piece , Rs )         % - and recurse down.
-  .                                          %
+replace_column( [C|Cs] , Y , Piece , [C|Ct] ) :- 
+  Y1 is Y-1 ,                               
+  replace_column( Cs , Y1 , Piece , Ct ).                                          
 
 
-% function that gets the play
+% === function that gets the play ===
 getPlay(Board, Player , NewBoard):-
 	getCoord(X , Y , Board),
 	!,
@@ -76,7 +81,3 @@ getPlay(Board, Player , NewBoard):-
 
 getPlay(Board, Player , NewBoard):-
 	write("\n Invalid Play\n").
-
-
-
-
