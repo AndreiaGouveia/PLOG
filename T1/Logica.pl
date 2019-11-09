@@ -1,19 +1,19 @@
 % === get coords ===
-getColumn(X):-
-	repeat,
-	write('\n O valor da coluna tem de ser entre \'a\' e \'d\' \n'),
-	read(X1),
-	char_code(X1,X2),
-	X2=<100,
-	X2>=97,
-	X is X2-96.
-
-getLine(Y):-
+getColumn(Y):-
 	repeat,
 	write('\n O valor da linha tem de ser entre 1 e 4 \n'),
 	read(Y),
 	Y=<4,
 	Y>=1.
+
+getLine(X):-
+	repeat,
+	write('\n O valor da coluna tem de ser entre \'a\' e \'d\' \n'),	
+	read(X1),
+	char_code(X1,X2),
+	X2=<100,
+	X2>=97,
+	X is X2-96.
 
 getCoord(X , Y , Board):-
 	getColumn(X),
@@ -23,7 +23,7 @@ getCoord(X , Y , Board):-
 
 % ===checks if move is valid ===
 validMove(0,0,H):-
-	H=='empty'.
+	H=empty.
 
 validMove(1,0,[H|_]):-
 	validMove(0,0,H).
@@ -40,16 +40,21 @@ validMove(X,Y,[_|T]):-
 	validMove(X,Y1,T).
 
 % === checks if piece is valid 
+validPiece(Piece, [] , []):-
+	Piece = 0.
 
-validPiece(Piece):- 
+validPiece(Piece, [Piece|T] , N):-
+	validPiece(0, T , N).
 
+validPiece(Piece, [H|T] , [H|N]):-
+	validPiece(Piece , T , N).
 
 % === ask for piece ===
-getPiece(Piece):-
+getPiece(Piece , AvailablePieces , UpdatedPieces):-
 	repeat,
 	write('\n Choose a piece \n'),% add a show pieces
 	read(Piece),
-	validPiece(Piece).
+	validPiece(Piece , AvailablePieces , UpdatedPieces).
 
 %===  functions to insert piece in board ===
 replace([] , X , Y , Piece , []).
@@ -73,11 +78,11 @@ replace_column( [C|Cs] , Y , Piece , [C|Ct] ) :-
 
 
 % === function that gets the play ===
-getPlay(Board, Player , NewBoard):-
+getPlay(Board, Player , NewBoard , AvailablePieces , UpdatedPieces):-
 	getCoord(X , Y , Board),
+	getPiece(Piece , AvailablePieces , UpdatedPieces),
 	!,
-	getPiece(Piece),
 	replace(Board, X , Y, Piece, NewBoard).
 
-getPlay(Board, Player , NewBoard):-
+getPlay(Board, Player , NewBoard , UpdatedPieces):-
 	write("\n Invalid Play\n").
