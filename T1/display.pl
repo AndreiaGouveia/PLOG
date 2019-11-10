@@ -1,28 +1,42 @@
 % Boards and Pieces
 initialBoard(
-                [[empty,empty,empty,empty],[empty,empty,empty,empty],[empty,empty,empty,empty],[empty,empty,empty,empty]]).
-               % [[empty,empty,empty,empty,empty],[empty,empty,empty,empty,empty],[empty,empty,empty,empty,empty],[empty,empty,empty,empty,empty],[empty,empty,empty,empty,empty]]).
+               % [[empty,empty,empty,empty],[empty,empty,empty,empty],[empty,empty,empty,empty],[empty,empty,empty,empty]]).
+                [[empty,empty,empty,empty,empty],[empty,empty,empty,empty,empty],[empty,empty,empty,empty,empty],[empty,empty,empty,empty,empty],[empty,empty,empty,empty,empty]]).
 
-piecesBlack(
-        [1 , 2 , 3 , 4]
-).
+piecesBlack(List,X):-
+        isEmpty(L),temp(L,X,1,List).
 
-piecesWhite(
-        [5 , 6 , 7 , 8]
-).
+piecesWhite(List,X):-
+        isEmpty(L),temp(L,X,6,List).
 
+temp(List,NumberOfRepetitions,Piece,New):-
+        length(List,L),
+        L<(Piece mod 5)*NumberOfRepetitions,
+        append(List, [Piece], NewList),
+        temp(NewList,NumberOfRepetitions,Piece,New).
+        
+temp(List,NumberOfRepetitions,Piece,New):-
+        length(List,L),
+        L=:= (Piece mod 5)*NumberOfRepetitions,
+        Piece mod 5 =\= 4,
+        NewPiece is Piece+1,
+        temp(List,NumberOfRepetitions,NewPiece,New).
 
+temp(List,NumberOfRepetitions,Piece,List):-
+        length(List,L),
+        L=:= (Piece mod 5)*NumberOfRepetitions,
+        Piece mod 5 =:= 4.
 
 % Tradution
 piece(empty, V) :- V = '*'.
 piece(1, V) :- V ='p'.
-piece(5, V) :- V ='P'.
+piece(6, V) :- V ='P'.
 piece(2, V) :- V ='c'.
-piece(6, V) :- V ='C'.
+piece(7, V) :- V ='C'.
 piece(3, V) :- V ='l'.
-piece(7, V) :- V ='L'.
+piece(8, V) :- V ='L'.
 piece(4, V) :- V ='e'.
-piece(8, V) :- V ='E'.
+piece(9, V) :- V ='E'.
 
 player(white , V) :- V = 1.
 player(black , V) :- V = 2.
@@ -92,6 +106,25 @@ printLine([H|T]):-
 
 % Prints the pieces that are still available
 
+printPieces([],Counter,CurrentPiece):-
+        piece(CurrentPiece,Piece),
+        write(Counter), write('*'),
+        write(Piece), write('('),
+        write(CurrentPiece), write(')  ').
+
+printPieces([Code|Pieces],Counter,CurrentPiece):-
+        Code==CurrentPiece,
+        Counter1 is Counter+1,
+        printPieces(Pieces,Counter1,CurrentPiece).
+
+printPieces([Code|Pieces],Counter,CurrentPiece):-
+        Code\=CurrentPiece,
+        piece(CurrentPiece,Piece),
+        write(Counter), write('*'),
+        write(Piece), write('('),
+        write(CurrentPiece), write(')  '),
+        printPieces(Pieces,1,Code).
+
 isEmpty([]).
 
 showPieces(PlayerPieces ):-
@@ -99,7 +132,7 @@ showPieces(PlayerPieces ):-
         !,
         write('\n Error: there are no more available pieces :( \n').
 
-showPieces(PlayerPieces ):-
-        write('\n Player\'s available pieces: \n'),
-        printLine(PlayerPieces),
+showPieces([P|PlayerPieces]):-
+        write('\n Player\'s available pieces: \n '),
+        printPieces(PlayerPieces,1,P),
         nl.
