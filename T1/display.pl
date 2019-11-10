@@ -1,6 +1,7 @@
 % Boards and Pieces
 initialBoard(
                 [[empty,empty,empty,empty],[empty,empty,empty,empty],[empty,empty,empty,empty],[empty,empty,empty,empty]]).
+               % [[empty,empty,empty,empty,empty],[empty,empty,empty,empty,empty],[empty,empty,empty,empty,empty],[empty,empty,empty,empty,empty],[empty,empty,empty,empty,empty]]).
 
 piecesBlack(
         [1 , 2 , 3 , 4]
@@ -34,14 +35,37 @@ showBoard(Player, Board, PlayerPieces) :-
         player(Player,Num),
         write( '\nIt\'s player '),
         write( Num ),
-        write( 'turn!\n' ),
+        write( ' turn!\n' ),
         printBoard(Board),
         showPieces(PlayerPieces).
 
 printBoard(Board):-
-        write('\n     a   b   c   d  '),
-        write('\n   |---|---|---|---|') ,
+        write('\n  '),
+        length(Board, X),
+        printTopBoard(X,0),
+        write('\n   ') ,
+        printEmptyLine(X),
         printBoard(Board, 1).
+
+printTopBoard(X,X).
+
+printTopBoard(X,Y):-
+        X>Y,
+        LetterCode is Y+97,
+        Y1 is Y+1,
+        write('   '),
+        char_code(LetterChar,LetterCode),
+        write(LetterChar),
+        printTopBoard(X,Y1).
+
+printEmptyLine(0):- 
+        write('|').
+
+printEmptyLine(X):-
+        X>0,
+        X1 is X-1,
+        write('|---'),
+        printEmptyLine(X1).
 
 printBoard([],_):-
         nl,
@@ -51,8 +75,9 @@ printBoard([H|T],Num):-
         write('\n '),
         write(Num),
         printLine(H),
-        nl,
-        write('   |---|---|---|---|'),
+        length(H,X),
+        write('\n   '),
+        printEmptyLine(X),
         Num1 is Num+1,
         printBoard(T,Num1).
 
