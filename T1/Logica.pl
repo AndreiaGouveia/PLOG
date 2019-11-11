@@ -26,50 +26,53 @@ getCoord(X , Y , Board):-
 % =============
 
 % === Win from row ===
+	
+winRowR([] , Counter , Counter , Piece).
 
-winRowR([] , Counter , Counter).
-
-winRowR( [H|T] , Counter ,FinalNumber):-
+winRowR( [H|T] , Counter , FinalNumber , Piece):-
 	Value1 is H mod 5,
 	Counter1 is Counter * Value1,
-	winRowR( T , Counter1 , FinalNumber).
+	winRowR( T , Counter1 , FinalNumber , Piece).
 
-winRow( _ , 24 , -1).
+winRow( _ , 24 , -1 , Piece).
 
-winRow( [H|T] , FinalNumber , 1):-
-	winRowR(H , 1 , FinalNumber),
+winRow( [H|T] , FinalNumber , 1 , Piece):-
+	winRowR(H , 1 , FinalNumber, Piece),
 	FinalNumber == 24,
 	!,
-	winRow( T , 24 , -1).
+	winRow( T , 24 , -1 , Piece).
 
-winRow( [_|T], FinalNumber , X):-
+winRow( [_|T], FinalNumber , X , Piece ):-
 	X>0,
 	X1 is X-1,
-	winRow( T , FinalNumber , X1).
+	winRow( T , FinalNumber , X1 , Piece).
 
+pieceCheckR([], Piece).
+
+pieceCheckR( [H|T] , Piece):-
+	H\=Piece,
+	Piece1 is Piece mod 5,
+	Value1 is H mod 5,
+	Value1\=Piece1,
+	pieceCheckR( T , Piece).
+
+pieceCheckR( [H|T] , Piece):-
+	H==Piece,
+	pieceCheckR( T , Piece).
+
+pieceCheck( [H|T] , 1 , Piece):-
+	pieceCheckR(H , Piece).
+
+pieceCheck( [_|T], X , Piece ):-
+	X>1,
+	X1 is X-1,
+	pieceCheck( T , X1 , Piece).
 
 % === Win from column ===
-winColumnR([] , Counter , Counter).
-
-winColumnR( [H|T] , Counter ,FinalNumber):-
-	Value1 is H mod 5,
-	Counter1 is Counter * Value1,
-	winColumnR( T , Counter1 , FinalNumber).
-
-winColumn( _N , 24 , -1).
-
-winColumn( [H|T] , FinalNumber , 1 ):-
-	winColumnR(H , 1 , FinalNumber),
-	FinalNumber == 24,
-	!,
-	winColumn( T , 24 , -1).
-
-winColumn( [_H|T], FinalNumber , Y):-
-	Y>0,
-	Y1 is Y-1,
-	winColumn( T , FinalNumber , Y1).
+% TO DO
 
 % === Win from square ===
+% TO DO
 
 % === checks if move is valid ===
 
@@ -94,21 +97,24 @@ validMove(X , Y , List):-
 	
 
 % === checks if piece is valid 
-validPiece(Piece, [] , []):-
-	Piece = 0.
+validPiece(Piece, [Piece|T]).
 
-validPiece(Piece, [Piece|T] , N):-
-	validPiece(0, T , N).
+validPiece(Piece, [H|T]):-
+	validPiece(Piece , T).
 
-validPiece(Piece, [H|T] , [H|N]):-
-	validPiece(Piece , T , N).
+removePiece(Piece, [] , []).
+
+removePiece(Piece, [Piece|T] , N):-
+	removePiece(0, T , N).
+
+removePiece(Piece, [H|T] , [H|N]):-
+	removePiece(Piece , T , N).
 
 % === ask for piece ===
-getPiece(Piece , AvailablePieces , UpdatedPieces):-
-	repeat,
+getPiece(Piece , AvailablePieces ):-
 	write('\n Choose a piece \n'),
 	read(Piece),
-	validPiece(Piece , AvailablePieces , UpdatedPieces).
+	validPiece(Piece , AvailablePieces ).
 
 %===  functions to insert piece in board ===
 replace([] , _X , _Y , _Piece , []).
@@ -134,18 +140,21 @@ replace_column( [C|Cs] , Y , Piece , [C|Ct] ) :-
 % === function that gets the play ===
 getPlay(Board, _Player , NewBoard , AvailablePieces , UpdatedPieces):-
 	getCoord(X , Y , Board),
-	getPiece(Piece , AvailablePieces , UpdatedPieces),
+	getPiece(Piece , AvailablePieces),
+	pieceCheck(Board , X , Piece),
 	!,
+	removePiece(Piece , AvailablePieces , UpdatedPieces),
 	replace(Board, X , Y, Piece, NewBoard),
-	checkWin(NewBoard , X , Y).
+	checkWin(NewBoard , X , Y , Piece ).
 
-getPlay(_Board, _Player , _NewBoard ,AvailablePieces, _UpdatedPieces):-
+getPlay(Board, _Player , NewBoard , AvailablePieces , UpdatedPieces):-
 	write("\n Invalid Play\n").
 
-checkWin(Board , X , Y):-
-	winRow(Board , Counter , X),
-	!,
+% === function that chexks if player has won ===
+
+checkWin(Board , X , Y , Piece ):-
+	winRow(Board , Counter , X , Piece),
 	write('\n You won! \n').
 
-checkWin(Board , X , Y):-
-	write('\n Not yet! \n').
+checkWin(Board , X , Y , Piece ):-
+	write('\n Keep playing! \n').
