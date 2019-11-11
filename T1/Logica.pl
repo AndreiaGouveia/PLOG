@@ -47,6 +47,8 @@ winRow( [_|T], FinalNumber , X , Piece ):-
 	X1 is X-1,
 	winRow( T , FinalNumber , X1 , Piece).
 
+% === Checks if piece is valid ===
+
 pieceCheckR([], Piece).
 
 pieceCheckR( [H|T] , Piece):-
@@ -102,6 +104,7 @@ validPiece(Piece, [Piece|T]).
 validPiece(Piece, [H|T]):-
 	validPiece(Piece , T).
 
+% === removes piece from available pieces === 
 removePiece(Piece, [] , []).
 
 removePiece(Piece, [Piece|T] , N):-
