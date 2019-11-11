@@ -6,10 +6,8 @@ menus:- % First Menu
 
 menuChoice(1):- % start game
         initialBoard(InitialBoard),
-        length(InitialBoard, X),
-        X1 is X-2,
-        piecesBlack(BlackPieces,X1),
-        piecesWhite(WhitePieces,X1),
+        piecesBlack(BlackPieces),
+        piecesWhite(WhitePieces),
         displayGameMenu,
         nl,
         read(Input),

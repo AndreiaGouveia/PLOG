@@ -1,6 +1,6 @@
 % ================ Person vs Person ======================
 
-initGame(Board , 16):-
+initGame(_Board , 16):-
         write('\n Game over!\n').
        
 initGame(Board , Counter , WhitePieces, BlackPieces):-
