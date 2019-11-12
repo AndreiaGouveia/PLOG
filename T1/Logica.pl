@@ -71,7 +71,6 @@ pieceCheck( [_|T], X , Piece ):-
 	pieceCheck( T , X1 , Piece).
 
 % === Win from column ===
-% TO DO
 
 winColumnR([H|_T] , H , 1):-!.
 
