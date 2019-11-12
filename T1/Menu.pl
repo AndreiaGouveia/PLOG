@@ -6,8 +6,10 @@ menus:- % First Menu
 
 menuChoice(1):- % start game
         initialBoard(InitialBoard),
-        piecesBlack(BlackPieces),
-        piecesWhite(WhitePieces),
+        length(InitialBoard, X),
+        X1 is X-2,
+        piecesBlack(BlackPieces,X1),
+        piecesWhite(WhitePieces,X1),
         displayGameMenu,
         nl,
         read(Input),
@@ -17,7 +19,7 @@ menuChoice(2):- % exitgame
         write('Thanks for playing!').
 
 menuChoice(_):- % invalid input
-        write('Must choose between 1 or 2'),
+        write('Must choose between 1 or 2\n'),
         read(Input),
         menuChoice(Input).
 

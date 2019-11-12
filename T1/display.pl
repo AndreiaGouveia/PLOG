@@ -1,16 +1,31 @@
 % Boards and Pieces
 initialBoard(
                 [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]).
+               % [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]).
 
-piecesBlack(
-        [1 , 1 , 2 , 2 , 3 , 3 , 4 , 4]
-).
+piecesBlack(List,X):-
+        isEmpty(L),createPieces(L,X,1,List).
 
-piecesWhite(
-        [6 , 6 , 7 , 7 , 8 , 8 , 9 , 9]
-).
+piecesWhite(List,X):-
+        isEmpty(L),createPieces(L,X,6,List).
 
+createPieces(List,NumberOfRepetitions,Piece,New):-
+        length(List,L),
+        L<(Piece mod 5)*NumberOfRepetitions,
+        append(List, [Piece], NewList),
+        createPieces(NewList,NumberOfRepetitions,Piece,New).
+        
+createPieces(List,NumberOfRepetitions,Piece,New):-
+        length(List,L),
+        L=:= (Piece mod 5)*NumberOfRepetitions,
+        Piece mod 5 =\= 4,
+        NewPiece is Piece+1,
+        createPieces(List,NumberOfRepetitions,NewPiece,New).
 
+createPieces(List,NumberOfRepetitions,Piece,List):-
+        length(List,L),
+        L=:= (Piece mod 5)*NumberOfRepetitions,
+        Piece mod 5 =:= 4.
 
 % Tradution
 piece(0, V) :- V = '*'.
@@ -34,14 +49,37 @@ showBoard(Player, Board, PlayerPieces) :-
         player(Player,Num),
         write( '\nIt\'s player '),
         write( Num ),
-        write( 'turn!\n' ),
+        write( ' turn!\n' ),
         printBoard(Board),
         showPieces(PlayerPieces).
 
 printBoard(Board):-
-        write('\n     a   b   c   d  '),
-        write('\n   |---|---|---|---|') ,
+        write('\n  '),
+        length(Board, X),
+        printTopBoard(X,0),
+        write('\n   ') ,
+        printEmptyLine(X),
         printBoard(Board, 1).
+
+printTopBoard(X,X).
+
+printTopBoard(X,Y):-
+        X>Y,
+        LetterCode is Y+97,
+        Y1 is Y+1,
+        write('   '),
+        char_code(LetterChar,LetterCode),
+        write(LetterChar),
+        printTopBoard(X,Y1).
+
+printEmptyLine(0):- 
+        write('|').
+
+printEmptyLine(X):-
+        X>0,
+        X1 is X-1,
+        write('|---'),
+        printEmptyLine(X1).
 
 printBoard([],_):-
         nl,
@@ -51,8 +89,9 @@ printBoard([H|T],Num):-
         write('\n '),
         write(Num),
         printLine(H),
-        nl,
-        write('   |---|---|---|---|'),
+        length(H,X),
+        write('\n   '),
+        printEmptyLine(X),
         Num1 is Num+1,
         printBoard(T,Num1).
 
@@ -67,6 +106,25 @@ printLine([H|T]):-
 
 % Prints the pieces that are still available
 
+printPieces([],Counter,CurrentPiece):-
+        piece(CurrentPiece,Piece),
+        write(Counter), write('*'),
+        write(Piece), write('('),
+        write(CurrentPiece), write(')  ').
+
+printPieces([Code|Pieces],Counter,CurrentPiece):-
+        Code==CurrentPiece,
+        Counter1 is Counter+1,
+        printPieces(Pieces,Counter1,CurrentPiece).
+
+printPieces([Code|Pieces],Counter,CurrentPiece):-
+        Code\=CurrentPiece,
+        piece(CurrentPiece,Piece),
+        write(Counter), write('*'),
+        write(Piece), write('('),
+        write(CurrentPiece), write(')  '),
+        printPieces(Pieces,1,Code).
+
 isEmpty([]).
 
 showPieces(PlayerPieces ):-
@@ -74,7 +132,7 @@ showPieces(PlayerPieces ):-
         !,
         write('\n Error: there are no more available pieces :( \n').
 
-showPieces(PlayerPieces ):-
-        write('\n Player\'s available pieces: \n'),
-        printLine(PlayerPieces),
+showPieces([P|PlayerPieces]):-
+        write('\n Player\'s available pieces: \n '),
+        printPieces(PlayerPieces,1,P),
         nl.
