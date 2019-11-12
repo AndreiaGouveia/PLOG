@@ -27,14 +27,14 @@ getCoord(X , Y , Board):-
 
 % === Win from row ===
 	
-winRowR([] , Counter , Counter , Piece).
+winRowR([] , _Counter , _Counter , _Piece).
 
 winRowR( [H|T] , Counter , FinalNumber , Piece):-
 	Value1 is H mod 5,
 	Counter1 is Counter * Value1,
 	winRowR( T , Counter1 , FinalNumber , Piece).
 
-winRow( _ , 24 , -1 , Piece).
+winRow( _ , 24 , -1 , _Piece).
 
 winRow( [H|T] , FinalNumber , 1 , Piece):-
 	winRowR(H , 1 , FinalNumber, Piece),
@@ -47,9 +47,9 @@ winRow( [_|T], FinalNumber , X , Piece ):-
 	X1 is X-1,
 	winRow( T , FinalNumber , X1 , Piece).
 
-% === Checks if piece is valid ===
+% === Checks if piece is valid in row===
 
-pieceCheckR([], Piece).
+pieceCheckR([], _Piece).
 
 pieceCheckR( [H|T] , Piece):-
 	H\=Piece,
@@ -62,7 +62,7 @@ pieceCheckR( [H|T] , Piece):-
 	H==Piece,
 	pieceCheckR( T , Piece).
 
-pieceCheck( [H|T] , 1 , Piece):-
+pieceCheck( [H|_] , 1 , Piece):-
 	pieceCheckR(H , Piece).
 
 pieceCheck( [_|T], X , Piece ):-
@@ -73,6 +73,45 @@ pieceCheck( [_|T], X , Piece ):-
 % === Win from column ===
 % TO DO
 
+winColumnR([H|_T] , H , 1):-!.
+
+winColumnR([_H|T] , Counter , Y):-
+	Y>1,
+	Y1 is Y - 1 ,
+	winColumnR(T, Counter , Y1).
+
+winColumn([] , 24 , _Y).
+
+winColumn([H|T] , FinalNumber , Y ):- 
+	winColumnR(H , Counter , Y),
+	Value is Counter mod 5,
+	Counter1 is FinalNumber * Value,
+	winColumn(T , Counter1 , Y).
+
+% === Checks if piece is valid in column ===
+
+checkPieceColumnR([H|_T] , H , 1):-!.
+
+checkPieceColumnR([_H|T] , Counter , Y):-
+	Y>1,
+	Y1 is Y - 1 ,
+	checkPieceColumnR(T, Counter , Y1).
+
+checkPieceColumn([] , _Y , _Piece).
+
+checkPieceColumn([H|T] , Y , Piece):- 
+	checkPieceColumnR(H , Counter , Y),
+	Piece\=	Counter, 
+	Value is Counter mod 5,
+	Piece\=Value,
+	Value1 is Piece mod 5,
+	Value1\=Value,
+	checkPieceColumn(T , Y , Piece).
+
+checkPieceColumn([H|T] , Y , Piece):- 
+	checkPieceColumnR(H , Counter , Y),
+	Piece==Counter, 
+	checkPieceColumn(T , Y , Piece).
 % === Win from square ===
 % TO DO
 
@@ -99,13 +138,13 @@ validMove(X , Y , List):-
 	
 
 % === checks if piece is valid 
-validPiece(Piece, [Piece|T]).
+validPiece(Piece, [Piece|_T]).
 
-validPiece(Piece, [H|T]):-
+validPiece(Piece, [_H|T]):-
 	validPiece(Piece , T).
 
 % === removes piece from available pieces === 
-removePiece(Piece, [] , []).
+removePiece(_Piece, [] , []).
 
 removePiece(Piece, [Piece|T] , N):-
 	removePiece(0, T , N).
@@ -145,19 +184,27 @@ getPlay(Board, _Player , NewBoard , AvailablePieces , UpdatedPieces):-
 	getCoord(X , Y , Board),
 	getPiece(Piece , AvailablePieces),
 	pieceCheck(Board , X , Piece),
+	checkPieceColumn(Board , Y , Piece),
 	!,
 	removePiece(Piece , AvailablePieces , UpdatedPieces),
 	replace(Board, X , Y, Piece, NewBoard),
 	checkWin(NewBoard , X , Y , Piece ).
 
-getPlay(Board, _Player , NewBoard , AvailablePieces , UpdatedPieces):-
+getPlay(_Board, _Player , _NewBoard , _AvailablePieces , _UpdatedPieces):-
 	write("\n Invalid Play\n").
 
 % === function that chexks if player has won ===
 
-checkWin(Board , X , Y , Piece ):-
-	winRow(Board , Counter , X , Piece),
+checkWin(Board , X , _Y , Piece ):-
+	winRow(Board , _Counter , X , Piece),
+	!,
 	write('\n You won! \n').
 
-checkWin(Board , X , Y , Piece ):-
+checkWin(Board , _X , Y , _Piece ):-
+	winColumn(Board , 1 , Y ),
+	!,
+	write('\n You won! \n').
+
+
+checkWin(_Board , _X , _Y , _Piece ):-
 	write('\n Keep playing! \n').
