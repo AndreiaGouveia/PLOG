@@ -76,7 +76,6 @@ pieceCheck( [_|T], Y , Piece ):-
 	pieceCheck( T , Y1 , Piece).
 
 % === Win from column ===
-% TO DO
 
 winColumnR([H|_T] , H , 1):-!.
 
@@ -168,8 +167,6 @@ replace([B|Bt] , X , 1 , Piece, [N|Bt]):-
 replace([B|Bt] , X, Y , Piece , [B|Nt]):-
 	Y1 is Y - 1,
 	replace(Bt, X , Y1 , Piece, Nt).
-
-replace_column( [] , _X , _Piece , []).
 
 replace_column( [_|Cs] , 1 , Piece , [Piece|Cs] ) .
 
