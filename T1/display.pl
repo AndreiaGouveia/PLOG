@@ -4,25 +4,25 @@ initialBoard(
                % [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]).
 
 piecesBlack(List,X):-
-        isEmpty(L),temp(L,X,1,List).
+        isEmpty(L),createPieces(L,X,1,List).
 
 piecesWhite(List,X):-
-        isEmpty(L),temp(L,X,6,List).
+        isEmpty(L),createPieces(L,X,6,List).
 
-temp(List,NumberOfRepetitions,Piece,New):-
+createPieces(List,NumberOfRepetitions,Piece,New):-
         length(List,L),
         L<(Piece mod 5)*NumberOfRepetitions,
         append(List, [Piece], NewList),
-        temp(NewList,NumberOfRepetitions,Piece,New).
+        createPieces(NewList,NumberOfRepetitions,Piece,New).
         
-temp(List,NumberOfRepetitions,Piece,New):-
+createPieces(List,NumberOfRepetitions,Piece,New):-
         length(List,L),
         L=:= (Piece mod 5)*NumberOfRepetitions,
         Piece mod 5 =\= 4,
         NewPiece is Piece+1,
-        temp(List,NumberOfRepetitions,NewPiece,New).
+        createPieces(List,NumberOfRepetitions,NewPiece,New).
 
-temp(List,NumberOfRepetitions,Piece,List):-
+createPieces(List,NumberOfRepetitions,Piece,List):-
         length(List,L),
         L=:= (Piece mod 5)*NumberOfRepetitions,
         Piece mod 5 =:= 4.

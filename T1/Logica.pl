@@ -52,7 +52,7 @@ winRow( [_|T], FinalNumber , X , Piece ):-
 	X1 is X-1,
 	winRow( T , FinalNumber , X1 , Piece).
 
-% === Checks if piece is valid ===
+% === Checks if piece is valid in row===
 
 pieceCheckR([], _Piece).
 
@@ -78,6 +78,45 @@ pieceCheck( [_|T], Y , Piece ):-
 % === Win from column ===
 % TO DO
 
+winColumnR([H|_T] , H , 1):-!.
+
+winColumnR([_H|T] , Counter , Y):-
+	Y>1,
+	Y1 is Y - 1 ,
+	winColumnR(T, Counter , Y1).
+
+winColumn([] , 24 , _Y).
+
+winColumn([H|T] , FinalNumber , Y ):- 
+	winColumnR(H , Counter , Y),
+	Value is Counter mod 5,
+	Counter1 is FinalNumber * Value,
+	winColumn(T , Counter1 , Y).
+
+% === Checks if piece is valid in column ===
+
+checkPieceColumnR([H|_T] , H , 1):-!.
+
+checkPieceColumnR([_H|T] , Counter , Y):-
+	Y>1,
+	Y1 is Y - 1 ,
+	checkPieceColumnR(T, Counter , Y1).
+
+checkPieceColumn([] , _Y , _Piece).
+
+checkPieceColumn([H|T] , Y , Piece):- 
+	checkPieceColumnR(H , Counter , Y),
+	Piece\=	Counter, 
+	Value is Counter mod 5,
+	Piece\=Value,
+	Value1 is Piece mod 5,
+	Value1\=Value,
+	checkPieceColumn(T , Y , Piece).
+
+checkPieceColumn([H|T] , Y , Piece):- 
+	checkPieceColumnR(H , Counter , Y),
+	Piece==Counter, 
+	checkPieceColumn(T , Y , Piece).
 % === Win from square ===
 % TO DO
 
@@ -100,9 +139,9 @@ validMove(X , Y , [_|T]):-
 	validMove( X , Y1 , T).	
 
 % === checks if piece is valid 
-validPiece(Piece, [Piece|_]).
+validPiece(Piece, [Piece|_T]).
 
-validPiece(Piece, [_|T]):-
+validPiece(Piece, [_H|T]):-
 	validPiece(Piece , T).
 
 % === removes piece from available pieces === 
@@ -116,18 +155,15 @@ removePiece(Piece, [H|T] , [H|N]):-
 
 % === ask for piece ===
 getPiece(Piece , AvailablePieces):-
-	repeat,
 	showPieces(AvailablePieces),
 	write('\n Choose a piece (INT)\n'),
 	read(Piece),
 	validPiece(Piece , AvailablePieces ).
 
 %===  functions to insert piece in board ===
-replace([] , _X , _Y , _Piece , []).
 
-replace([B|Bt] , X , 1 , Piece, [N|Nt]):-
-	replace_column(B, X , Piece , N),
-	replace(Bt , 6 , 1 , Piece , Nt). % ver melhor a questao doo  6 //TODO nao podes so fazer ponto final na linha anterior?
+replace([B|Bt] , X , 1 , Piece, [N|Bt]):-
+	replace_column(B, X , Piece , N).
 
 replace([B|Bt] , X, Y , Piece , [B|Nt]):-
 	Y1 is Y - 1,
@@ -135,8 +171,7 @@ replace([B|Bt] , X, Y , Piece , [B|Nt]):-
 
 replace_column( [] , _X , _Piece , []).
 
-replace_column( [_|Cs] , 1 , Piece , [Piece|Cs] ) :-
-	replace_column(Cs , 1 , Piece , Cs).
+replace_column( [_|Cs] , 1 , Piece , [Piece|Cs] ) .
 
 replace_column( [C|Cs] , X , Piece , [C|Ct] ) :- 
   X1 is X-1 ,                               
@@ -148,6 +183,7 @@ getPlay(Board, _Player , NewBoard , AvailablePieces , UpdatedPieces):-
 	getCoord(X , Y , Board),
 	getPiece(Piece , AvailablePieces),
 	pieceCheck(Board , Y , Piece),
+	checkPieceColumn(Board , X , Piece),
 	!,
 	removePiece(Piece , AvailablePieces , UpdatedPieces),
 	replace(Board, X , Y, Piece, NewBoard),
@@ -158,9 +194,16 @@ getPlay(_Board, _Player , _NewBoard , _AvailablePieces , _UpdatedPieces):-
 
 % === function that checks if player has won ===
 
-checkWin(Board , X , Y , Piece ):-
-	winRow(Board , Counter , Y , Piece), %Counter?
+checkWin(Board , _X , Y , Piece ):-
+	winRow(Board , _Counter , Y , Piece),
+	!,
 	write('\n You won! \n').
+
+checkWin(Board , X , _Y , _Piece ):-
+	winColumn(Board , 1 , X ),
+	!,
+	write('\n You won! \n').
+
 
 checkWin(_Board , _X , _Y , _Piece ):-
 	write('\n Keep playing! \n').

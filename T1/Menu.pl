@@ -19,16 +19,16 @@ menuChoice(2):- % exitgame
         write('Thanks for playing!').
 
 menuChoice(_):- % invalid input
-        write('Must choose between 1 or 2'),
+        write('Must choose between 1 or 2\n'),
         read(Input),
         menuChoice(Input).
 
 
 % ========== Init game option ==================
 gameChoice(1 , InitialBoard , BlackPieces , WhitePieces):- initGame(InitialBoard , 0, WhitePieces , BlackPieces) , menus. % person vs person
-gameChoice(2 , InitialBoard , BlackPieces , WhitePieces):- write('\n Not yet implemented! \n') , menus. % person vs pc
-gameChoice(3 , InitialBoard , BlackPieces , WhitePieces):- write('\n Not yet implemented! \n') , menus. % pc vs pc
-gameChoice(_ , InitialBoard , BlackPieces , WhitePieces):- menus. % invalid input
+gameChoice(2 , _InitialBoard , _BlackPieces , _WhitePieces):- write('\n Not yet implemented! \n') , menus. % person vs pc
+gameChoice(3 , _InitialBoard , _BlackPieces , _WhitePieces):- write('\n Not yet implemented! \n') , menus. % pc vs pc
+gameChoice(_ , _InitialBoard , _BlackPieces , _WhitePieces):- menus. % invalid input
 
 % ============= Menus Display =====================
 displayMainMenu:-
