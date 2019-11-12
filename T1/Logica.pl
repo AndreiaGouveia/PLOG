@@ -168,8 +168,6 @@ replace([B|Bt] , X, Y , Piece , [B|Nt]):-
 	Y1 is Y - 1,
 	replace(Bt, X , Y1 , Piece, Nt).
 
-replace_column( [] , _X , _Piece , []).
-
 replace_column( [_|Cs] , 1 , Piece , [Piece|Cs] ) .
 
 replace_column( [C|Cs] , X , Piece , [C|Ct] ) :- 
