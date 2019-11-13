@@ -1,7 +1,12 @@
 menus:- % First Menu
+        repeat,
         displayMainMenu,
         nl,
-        read(Input),
+        read_line([H|T]),
+        length(T,0),
+        H >= 48, H =< 57,%delete this? its optional, forces between 0-9
+        !,
+        Input is H-48,
         menuChoice(Input).
 
 menuChoice(1):- % start game
@@ -10,9 +15,13 @@ menuChoice(1):- % start game
         X1 is X-2,
         piecesBlack(BlackPieces,X1),
         piecesWhite(WhitePieces,X1),
+        repeat,
         displayGameMenu,
         nl,
-        read(Input),
+        read_line([H|T]),
+        length(T,0),
+        !,
+        Input is H-48,
         gameChoice(Input , InitialBoard , BlackPieces , WhitePieces).
 
 menuChoice(2):- % exitgame
@@ -20,15 +29,14 @@ menuChoice(2):- % exitgame
 
 menuChoice(_):- % invalid input
         write('Must choose between 1 or 2\n'),
-        read(Input),
-        menuChoice(Input).
+        menus.
 
 
 % ========== Init game option ==================
 gameChoice(1 , InitialBoard , BlackPieces , WhitePieces):- initGame(InitialBoard , 0, WhitePieces , BlackPieces) , menus. % person vs person
 gameChoice(2 , _InitialBoard , _BlackPieces , _WhitePieces):- write('\n Not yet implemented! \n') , menus. % person vs pc
 gameChoice(3 , _InitialBoard , _BlackPieces , _WhitePieces):- write('\n Not yet implemented! \n') , menus. % pc vs pc
-gameChoice(_ , _InitialBoard , _BlackPieces , _WhitePieces):- menus. % invalid input
+gameChoice(_ , _InitialBoard , _BlackPieces , _WhitePieces):- menuChoice(1). % invalid input
 
 % ============= Menus Display =====================
 displayMainMenu:-

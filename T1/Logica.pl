@@ -3,7 +3,9 @@ getLine(Y,Size):-
 	write('\n Line value must be between 1 and '),
 	write(Size),
 	nl,
-	read(Y),
+	read_line([H|T]),
+    length(T,0),
+	Y is H-48,
 	Y=<Size,
 	Y>=1.
 
@@ -13,11 +15,11 @@ getColumn(X,Size):-
 	write('\n Column value must be between \'a\' and \''),
 	write(Char),
 	write('\' \n'),	
-	read(X1),
-	char_code(X1,X2),
-	X2=<MaxCharCode,
-	X2>=97,
-	X is X2-96.
+	read_line([H|T]),
+    length(T,0),
+	H=<MaxCharCode,
+	H>=97,
+	X is H-96.
 
 getCoord(X , Y , Board):-
 	length(Board, Size),
@@ -156,7 +158,9 @@ removePiece(Piece, [H|T] , [H|N]):-
 getPiece(Piece , AvailablePieces):-
 	showPieces(AvailablePieces),
 	write('\n Choose a piece (INT)\n'),
-	read(Piece),
+	read_line([H|T]),
+	length(T,0),
+	Piece is H-48,
 	validPiece(Piece , AvailablePieces ).
 
 %===  functions to insert piece in board ===
