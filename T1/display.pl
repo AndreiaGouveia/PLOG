@@ -58,7 +58,7 @@ printBoard(Board):-
         length(Board, X),
         printTopBoard(X,0),
         write('\n   ') ,
-        printEmptyLine(X),
+        printEmptyLine(X,0),
         printBoard(Board, 1).
 
 printTopBoard(X,X).
@@ -72,14 +72,36 @@ printTopBoard(X,Y):-
         write(LetterChar),
         printTopBoard(X,Y1).
 
-printEmptyLine(0):- 
+printEmptyLine(0,_):- 
         write('|').
 
-printEmptyLine(X):-
+printEmptyLine(X,0):-
         X>0,
-        X1 is X-1,
+        1 =\= X mod 2,
         write('|---'),
-        printEmptyLine(X1).
+        X1 is X-1,
+        printEmptyLine(X1,0).
+
+printEmptyLine(X,0):-
+        X>0,
+        1 =:= X mod 2,
+        write('----'),
+        X1 is X-1,
+        printEmptyLine(X1,0).
+
+printEmptyLine(X,1):-
+        X>0,
+        1 =:= X mod 2,
+        write('    '),
+        X1 is X-1,
+        printEmptyLine(X1,1).
+
+printEmptyLine(X,1):-
+        X>0,
+        1 =\= X mod 2,
+        write('|   '),
+        X1 is X-1,
+        printEmptyLine(X1,1).
 
 printBoard([],_):-
         nl,
@@ -91,14 +113,25 @@ printBoard([H|T],Num):-
         printLine(H),
         length(H,X),
         write('\n   '),
-        printEmptyLine(X),
-        Num1 is Num+1,
-        printBoard(T,Num1).
+        Num1 is Num mod 2,
+        printEmptyLine(X,Num1),
+        Num2 is Num+1,
+        printBoard(T,Num2).
 
 printLine([]):-
         write(' |').
 
 printLine([H|T]):-
+        length(T,X),
+        0 =:= X mod 2,
+        write('   '),
+        piece(H,Piece),
+        write(Piece),
+        printLine(T).
+
+printLine([H|T]):-
+        length(T,X),
+        0 =\= X mod 2,
         write(' | '),
         piece(H,Piece),
         write(Piece),
