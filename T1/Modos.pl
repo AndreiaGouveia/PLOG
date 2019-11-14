@@ -1,7 +1,10 @@
 % ================ Person vs Person ======================
+won(_,1,Counter1):-
+        Counter1 is 15.
+won(Counter,0,Counter).
 
-initGame(_ , 16, _, _):-
-        write('\n Game over!\n').
+initGame(_, _ , 16, _, _):-
+        write('\n Game over! \n').
        
 initGame(0,Board , Counter , WhitePieces, BlackPieces):-
         Counter<16,
@@ -15,13 +18,15 @@ initGame(1,Board , Counter , WhitePieces, BlackPieces):-
 
 whitePlay(Board , Counter , WhitePieces,NewBoard,NewWhitePieces,Counter1):-
         showBoard(white,Board, WhitePieces),
-        getPlay(Board , white , NewBoard , WhitePieces , NewWhitePieces),
-        Counter1 is Counter + 1.
+        getPlay(Board , white , NewBoard , WhitePieces , NewWhitePieces,X),
+        won(Counter,X,NewCounter),
+        Counter1 is NewCounter + 1.
 
 blackPlay(Board,Counter,BlackPieces,NewBoard,NewBlackPieces,Counter1):-
         showBoard(black,Board,BlackPieces),
-        getPlay(Board , black , NewBoard , BlackPieces , NewBlackPieces),
-        Counter1 is Counter + 1.
+        getPlay(Board , black , NewBoard , BlackPieces , NewBlackPieces,X),
+        won(Counter,X,NewCounter),
+        Counter1 is NewCounter + 1.
 
 % ================ Person vs Computer ======================
 

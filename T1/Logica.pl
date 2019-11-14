@@ -238,7 +238,7 @@ replace_column( [C|Cs] , X , Piece , [C|Ct] ) :-
 
 
 % === function that gets the play ===
-getPlay(Board, _Player , NewBoard , AvailablePieces , UpdatedPieces):-
+getPlay(Board, _Player , NewBoard , AvailablePieces , UpdatedPieces,Win):-
 	getCoord(X , Y , Board),
 	getPiece(Piece , AvailablePieces),
 	pieceCheckR(Board , Y , Piece),
@@ -248,31 +248,35 @@ getPlay(Board, _Player , NewBoard , AvailablePieces , UpdatedPieces):-
 	!,
 	removePiece(Piece , AvailablePieces , UpdatedPieces),
 	replace(Board, X , Y, Piece, NewBoard),
-	checkWin(NewBoard , X , Y ).
+	checkWin(NewBoard , X , Y ,Win).
 
 getPlay(_Board, _Player , _NewBoard , _AvailablePieces , _UpdatedPieces):-
 	write("\n Invalid Play\n").
 
 % === function that checks if player has won === 
 
-checkWin(Board , _X , Y ):- % win from row
+checkWin(Board , _X , Y ,Win):- % win from row
 	nth1(Y,Board,Row),
 	winList(Row, 1),
 	!,
-	write('\n You won! \n').
+	write('\n You won! \n'),
+	Win is 1.
 
-checkWin(Board , X , _Y ):- % win from column
+checkWin(Board , X , _Y ,Win):- % win from column
 	transpose(Board, Board1),
 	nth1(X,Board1,Row),
 	winList(Row, 1),
 	!,
-	write('\n You won! \n').
+	write('\n You won! \n'),
+	Win is 1.
 
-checkWin(Board , X , Y ):- % win from square
+checkWin(Board , X , Y ,Win):- % win from square
 	getSquare(Board,X,Y,List),
 	winList(List, 1),
 	!,
-	write('\n You won! \n').
+	write('\n You won! \n'),
+	Win is 1.
 
-checkWin(_Board , _X , _Y ):-
-	write('\n Keep playing! \n').
+checkWin(_Board , _X , _Y ,Win):-
+	write('\n Keep playing! \n'),
+	Win is 0.
