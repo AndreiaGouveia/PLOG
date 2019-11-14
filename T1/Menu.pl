@@ -33,7 +33,7 @@ menuChoice(_):- % invalid input
 
 
 % ========== Init game option ==================
-gameChoice(1 , InitialBoard , BlackPieces , WhitePieces):- initGame(InitialBoard , 0, WhitePieces , BlackPieces) , menus. % person vs person
+gameChoice(1 , InitialBoard , BlackPieces , WhitePieces):- initGame(0,InitialBoard , 0, WhitePieces , BlackPieces) , menus. % person vs person
 gameChoice(2 , _InitialBoard , _BlackPieces , _WhitePieces):- write('\n Not yet implemented! \n') , menus. % person vs pc
 gameChoice(3 , _InitialBoard , _BlackPieces , _WhitePieces):- write('\n Not yet implemented! \n') , menus. % pc vs pc
 gameChoice(_ , _InitialBoard , _BlackPieces , _WhitePieces):- menuChoice(1). % invalid input

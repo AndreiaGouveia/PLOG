@@ -58,19 +58,19 @@ nth1( [_|T], Y , Row):-
 
 % === Checks if piece is valid in row===
 
-	pieceCheckR(Board , Y , Piece):-
-		Piece>5,
-		Piece1 is Piece-5,
-		pieceCheckRAux(Board,Y,Piece1).
+pieceCheckR(Board , Y , Piece):-
+	Piece>5,
+	Piece1 is Piece-5,
+	pieceCheckRAux(Board,Y,Piece1).
 
-	pieceCheckR(Board , Y , Piece):-
-		Piece<5,
-		Piece1 is Piece+5,
-		pieceCheckRAux(Board,Y,Piece1).
+pieceCheckR(Board , Y , Piece):-
+	Piece<5,
+	Piece1 is Piece+5,
+	pieceCheckRAux(Board,Y,Piece1).
 
-	pieceCheckRAux(Board, Y, Piece):-
-		nth1(Y,Board,Row),
-		\+member(Piece, Row).
+pieceCheckRAux(Board, Y, Piece):-
+	nth1(Y,Board,Row),
+	\+member(Piece, Row).
 
 
 /*
