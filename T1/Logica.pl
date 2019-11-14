@@ -14,12 +14,20 @@ getColumn(X,Size):-
 	char_code(Char,MaxCharCode),
 	write('\n Column value must be between \'a\' and \''),
 	write(Char),
-	write('\' \n'),	
+	write('\' (uppercase is also accepted)\n'),	
 	read_line([H|T]),
-    length(T,0),
+	length(T,0),
+	auxGetColumn(H,X,MaxCharCode).
+
+auxGetColumn(H,X,MaxCharCode):- %para minuscula
 	H=<MaxCharCode,
 	H>=97,
 	X is H-96.
+
+auxGetColumn(H,X,MaxCharCode):- %para maiuscula
+	H=<MaxCharCode-22,
+	H>=65,
+	X is H-64.
 
 getCoord(X , Y , Board):-
 	length(Board, Size),
@@ -32,30 +40,40 @@ getCoord(X , Y , Board):-
 % === RULES ===
 % =============
 
-% === Win from row ===
+% === Win from List ===
 	
-winRowR([] , Counter , Counter , _Piece).
+winList([] , 24).
 
-winRowR( [H|T] , Counter , FinalNumber , Piece):-
+winList( [H|T] , Counter):-
 	Value1 is H mod 5,
 	Counter1 is Counter * Value1,
-	winRowR( T , Counter1 , FinalNumber , Piece).
+	winList( T , Counter1).
 
-winRow( _ , 24 , -1 , _Piece).
+/* nth1( [H|_] , 1 , H).
 
-winRow( [H|T] , FinalNumber , 1 , Piece):-
-	winRowR(H , 1 , FinalNumber, Piece),
-	FinalNumber == 24,
-	!,
-	winRow( T , 24 , -1 , Piece).
-
-winRow( [_|T], FinalNumber , X , Piece ):-
-	X>0,
-	X1 is X-1,
-	winRow( T , FinalNumber , X1 , Piece).
+nth1( [_|T], Y , Row):-
+	Y>0,
+	Y1 is Y-1,
+	nth1( T , Y1 , Row). */
 
 % === Checks if piece is valid in row===
 
+	pieceCheckR(Board , Y , Piece):-
+		Piece>5,
+		Piece1 is Piece-5,
+		pieceCheckRAux(Board,Y,Piece1).
+
+	pieceCheckR(Board , Y , Piece):-
+		Piece<5,
+		Piece1 is Piece+5,
+		pieceCheckRAux(Board,Y,Piece1).
+
+	pieceCheckRAux(Board, Y, Piece):-
+		nth1(Y,Board,Row),
+		\+member(Piece, Row).
+
+
+/*
 pieceCheckR([], _Piece).
 
 pieceCheckR( [H|T] , Piece):-
@@ -75,10 +93,12 @@ pieceCheck( [H|_] , 1 , Piece):-
 pieceCheck( [_|T], Y , Piece ):-
 	Y>1,
 	Y1 is Y-1,
-	pieceCheck( T , Y1 , Piece).
+	pieceCheck( T , Y1 , Piece).*/
+
+
 
 % === Win from column ===
-
+/*
 winColumnR([H|_T] , H , 1):-!.
 
 winColumnR([_H|T] , Counter , Y):-
@@ -93,9 +113,25 @@ winColumn([H|T] , FinalNumber , Y ):-
 	Value is Counter mod 5,
 	Counter1 is FinalNumber * Value,
 	winColumn(T , Counter1 , Y).
-
+*/
 % === Checks if piece is valid in column ===
 
+pieceCheckC(Board , X , Piece):-
+	Piece>5,
+	Piece1 is Piece-5,
+	pieceCheckCAux(Board,X,Piece1).
+
+pieceCheckC(Board , X , Piece):-
+	Piece<5,
+	Piece1 is Piece+5,
+	pieceCheckCAux(Board,X,Piece1).
+
+pieceCheckCAux(Board, X, Piece):-
+	transpose(Board,Board1),
+	nth1(X,Board1,Column),
+	\+member(Piece, Column).
+
+/*
 checkPieceColumnR([H|_T] , H , 1):-!.
 
 checkPieceColumnR([_H|T] , Counter , Y):-
@@ -118,8 +154,30 @@ checkPieceColumn([H|T] , Y , Piece):-
 	checkPieceColumnR(H , Counter , Y),
 	Piece==Counter, 
 	checkPieceColumn(T , Y , Piece).
+*/
 % === Win from square ===
-% TO DO
+
+getSquare(Board,X,Y,[Value1,Value2,Value3,Value4]):-
+	X1 is X + (X mod 2) - 1,
+	Y1 is Y + (Y mod 2) - 1,
+	Y2 is Y1+1,
+	X2 is X1+1,
+	nth1(Y1,Board,Row),
+	nth1(Y2,Board,Row1),
+	nth1(X1,Row,Value1),
+	nth1(X2,Row,Value2),
+	nth1(X1,Row1,Value3),
+	nth1(X2,Row1,Value4).
+
+pieceCheckS(List , Piece):-
+	Piece>5,
+	Piece1 is Piece-5,
+	\+member(Piece1, List).
+
+pieceCheckS(List , Piece):-
+	Piece<5,
+	Piece1 is Piece+5,
+	\+member(Piece1, List).
 
 % === checks if move is valid ===
 
@@ -183,28 +241,38 @@ replace_column( [C|Cs] , X , Piece , [C|Ct] ) :-
 getPlay(Board, _Player , NewBoard , AvailablePieces , UpdatedPieces):-
 	getCoord(X , Y , Board),
 	getPiece(Piece , AvailablePieces),
-	pieceCheck(Board , Y , Piece),
-	checkPieceColumn(Board , X , Piece),
+	pieceCheckR(Board , Y , Piece),
+	pieceCheckC(Board , X , Piece),
+	getSquare(Board,X,Y,List),
+	pieceCheckS(List, Piece),
 	!,
 	removePiece(Piece , AvailablePieces , UpdatedPieces),
 	replace(Board, X , Y, Piece, NewBoard),
-	checkWin(NewBoard , X , Y , Piece ).
+	checkWin(NewBoard , X , Y ).
 
 getPlay(_Board, _Player , _NewBoard , _AvailablePieces , _UpdatedPieces):-
 	write("\n Invalid Play\n").
 
-% === function that checks if player has won ===
+% === function that checks if player has won === 
 
-checkWin(Board , _X , Y , Piece ):-
-	winRow(Board , _Counter , Y , Piece),
+checkWin(Board , _X , Y ):- % win from row
+	nth1(Y,Board,Row),
+	winList(Row, 1),
 	!,
 	write('\n You won! \n').
 
-checkWin(Board , X , _Y , _Piece ):-
-	winColumn(Board , 1 , X ),
+checkWin(Board , X , _Y ):- % win from column
+	transpose(Board, Board1),
+	nth1(X,Board1,Row),
+	winList(Row, 1),
 	!,
 	write('\n You won! \n').
 
+checkWin(Board , X , Y ):- % win from square
+	getSquare(Board,X,Y,List),
+	winList(List, 1),
+	!,
+	write('\n You won! \n').
 
-checkWin(_Board , _X , _Y , _Piece ):-
+checkWin(_Board , _X , _Y ):-
 	write('\n Keep playing! \n').

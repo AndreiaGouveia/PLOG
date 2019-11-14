@@ -65,7 +65,7 @@ printTopBoard(X,X).
 
 printTopBoard(X,Y):-
         X>Y,
-        LetterCode is Y+97,
+        LetterCode is Y+65,
         Y1 is Y+1,
         write('   '),
         char_code(LetterChar,LetterCode),

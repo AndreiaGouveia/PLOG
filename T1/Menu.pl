@@ -4,7 +4,7 @@ menus:- % First Menu
         nl,
         read_line([H|T]),
         length(T,0),
-        H >= 48, H =< 57,%delete this? its optional, forces between 0-9
+        H >= 48, H =< 57, %//TODO delete this? its optional, forces between 0-9
         !,
         Input is H-48,
         menuChoice(Input).
