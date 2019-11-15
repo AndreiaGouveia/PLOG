@@ -113,6 +113,10 @@ pieceCheck(List , Piece):-
 validMove(X , Y , List):-
 	nth1(Y,List,NewList),
 	nth1(X,NewList,0).
+
+validMove(_,_,_):-
+	write('\n Not a valid move.'),
+	fail.
 /*
 validMove( 1 , [H|_]):-
 	H==0,!.
@@ -185,7 +189,7 @@ getPlay(Board , NewBoard , AvailablePieces , UpdatedPieces,Win):-
 	getCoord(X , Y , Board),
 	getPiece(Piece , AvailablePieces),
 	move( Board ,  _Player , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard),
-	checkWin(Board,X,Y,Win).
+	checkWin(NewBoard,X,Y,Win).
 
 
 finishMove(Board , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard):-
