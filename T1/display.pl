@@ -40,17 +40,13 @@ piece(9, V) :- V ='E'.
 player(white , V) :- V = 1.
 player(black , V) :- V = 2.
 
-
-
 % Display functions 
 
-showBoard(Player, Board, PlayerPieces) :- 
+turn(Player):-
         player(Player,Num),
         write( '\nIt\'s player '),
         write( Num ),
-        write( ' turn!\n' ),
-        printBoard(Board),
-        showPieces(PlayerPieces).
+        write( ' turn!\n' ).
 
 printBoard(Board):-
         write('\n  '),

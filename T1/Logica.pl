@@ -51,19 +51,19 @@ winList( [H|T] , Counter):-
 
 % === Checks if piece is valid in row===
 
-	pieceCheckR(Board , Y , Piece):-
-		Piece>5,
-		Piece1 is Piece-5,
-		pieceCheckRAux(Board,Y,Piece1).
+pieceCheckR(Board , Y , Piece):-
+	Piece>5,
+	Piece1 is Piece-5,
+	pieceCheckRAux(Board,Y,Piece1).
 
-	pieceCheckR(Board , Y , Piece):-
-		Piece<5,
-		Piece1 is Piece+5,
-		pieceCheckRAux(Board,Y,Piece1).
+pieceCheckR(Board , Y , Piece):-
+	Piece<5,
+	Piece1 is Piece+5,
+	pieceCheckRAux(Board,Y,Piece1).
 
-	pieceCheckRAux(Board, Y, Piece):-
-		nth1(Y,Board,Row),
-		\+member(Piece, Row).
+pieceCheckRAux(Board, Y, Piece):-
+	nth1(Y,Board,Row),
+	\+member(Piece, Row).
 
 
 % === Win from column ===
@@ -110,7 +110,14 @@ pieceCheck(List , Piece):-
 	\+member(Piece1, List).
 
 % === checks if move is valid ===
+validMove(X , Y , List):-
+	nth1(Y,List,NewList),
+	nth1(X,NewList,0).
 
+validMove(_,_,_):-
+	write('\n Not a valid move.'),
+	fail.
+/*
 validMove( 1 , [H|_]):-
 	H==0,!.
 
@@ -126,12 +133,13 @@ validMove(X , Y , [_|T]):-
 	Y>1,
 	Y1 is Y - 1,
 	validMove( X , Y1 , T).	
-
+*/
 % === checks if piece is valid 
-validPiece(Piece, [Piece|_T]).
+%validPiece(Piece, [Piece|_T]).
 
-validPiece(Piece, [_H|T]):-
-	validPiece(Piece , T).
+validPiece(Piece,List):- % [_H|T]):-
+	member(Piece,List).
+	%validPiece(Piece , T).
 
 pieceRuleValidation(Board , X , Y , Piece):-
 	pieceCheckR(Board , Y , Piece),
@@ -139,13 +147,17 @@ pieceRuleValidation(Board , X , Y , Piece):-
 	getSquare(Board,X,Y,List),
 	pieceCheck(List, Piece).
 % === removes piece from available pieces === 
-removePiece(_Piece, [] , []).
+/*removePiece(_Piece, [] , []).
 
 removePiece(Piece, [Piece|T] , N):-
 	removePiece(0, T , N).
 
 removePiece(Piece, [H|T] , [H|N]):-
-	removePiece(Piece , T , N).
+	removePiece(Piece , T , N).*/
+
+removePiece(Piece, List , List1):-
+	append(La,[Piece|Lb],List),  
+	append(La,Lb,List1).
 
 % === ask for piece ===
 getPiece(Piece , AvailablePieces):-
@@ -173,48 +185,49 @@ replace_column( [C|Cs] , X , Piece , [C|Ct] ) :-
 
 
 % === function that gets the play ===
-getPlay(Board, Player , NewBoard , AvailablePieces , UpdatedPieces):-
+getPlay(Board , NewBoard , AvailablePieces , UpdatedPieces,Win):-
 	getCoord(X , Y , Board),
 	getPiece(Piece , AvailablePieces),
-	move( Board ,  Player , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard).
+	move( Board ,  _Player , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard),
+	checkWin(NewBoard,X,Y,Win).
 
 
-finnishMove(Board , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard):-
+finishMove(Board , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard):-
 	removePiece(Piece , AvailablePieces , UpdatedPieces),
-	replace(Board, X , Y, Piece, NewBoard),
-	checkWin(NewBoard , X , Y ).
+	replace(Board, X , Y, Piece, NewBoard).
 
 move( Board ,  _Player , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard):-
 	pieceRuleValidation(Board , X , Y , Piece),
 	!,
-	finnishMove(Board , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard).
+	finishMove(Board , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard).
 
 move( _Board ,  _Player , _X , _Y , _Piece , _AvailablePieces , _UpdatedPieces):-
 	write("\n Invalid Play\n").
 
 % === function that checks if player has won === 
 
-checkWin(Board , _X , Y ):- % win from row
+checkWin(Board , _X , Y ,Win):- % win from row
 	nth1(Y,Board,Row),
 	winList(Row, 1),
 	!,
-	write('\n You won! \n').
+	write('\n You won! \n'),
+	Win is 1.
 
-checkWin(Board , X , _Y ):- % win from column
+checkWin(Board , X , _Y ,Win):- % win from column
 	transpose(Board, Board1),
 	nth1(X,Board1,Row),
 	winList(Row, 1),
 	!,
-	write('\n You won! \n').
+	write('\n You won! \n'),
+	Win is 1.
 
-checkWin(Board , X , Y ):- % win from square
+checkWin(Board , X , Y ,Win):- % win from square
 	getSquare(Board,X,Y,List),
 	winList(List, 1),
 	!,
-	write('\n You won! \n').
+	write('\n You won! \n'),
+	Win is 1.
 
-checkWin(_Board , _X , _Y ):-
-	write('\n Keep playing! \n').
-
-% === fucntion that checks if it is gameOver ===
-% to do 
+checkWin(_Board , _X , _Y ,Win):-
+	write('\n Keep playing! \n'),
+	Win is 0.
