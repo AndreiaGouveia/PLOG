@@ -110,7 +110,10 @@ pieceCheck(List , Piece):-
 	\+member(Piece1, List).
 
 % === checks if move is valid ===
-
+validMove(X , Y , List):-
+	nth1(Y,List,NewList),
+	nth1(X,NewList,0).
+/*
 validMove( 1 , [H|_]):-
 	H==0,!.
 
@@ -126,12 +129,13 @@ validMove(X , Y , [_|T]):-
 	Y>1,
 	Y1 is Y - 1,
 	validMove( X , Y1 , T).	
-
+*/
 % === checks if piece is valid 
-validPiece(Piece, [Piece|_T]).
+%validPiece(Piece, [Piece|_T]).
 
-validPiece(Piece, [_H|T]):-
-	validPiece(Piece , T).
+validPiece(Piece,List):- % [_H|T]):-
+	member(Piece,List).
+	%validPiece(Piece , T).
 
 pieceRuleValidation(Board , X , Y , Piece):-
 	pieceCheckR(Board , Y , Piece),
@@ -139,13 +143,17 @@ pieceRuleValidation(Board , X , Y , Piece):-
 	getSquare(Board,X,Y,List),
 	pieceCheck(List, Piece).
 % === removes piece from available pieces === 
-removePiece(_Piece, [] , []).
+/*removePiece(_Piece, [] , []).
 
 removePiece(Piece, [Piece|T] , N):-
 	removePiece(0, T , N).
 
 removePiece(Piece, [H|T] , [H|N]):-
-	removePiece(Piece , T , N).
+	removePiece(Piece , T , N).*/
+
+removePiece(Piece, List , List1):-
+	append(La,[Piece|Lb],List),  
+	append(La,Lb,List1).
 
 % === ask for piece ===
 getPiece(Piece , AvailablePieces):-
@@ -176,13 +184,13 @@ replace_column( [C|Cs] , X , Piece , [C|Ct] ) :-
 getPlay(Board , NewBoard , AvailablePieces , UpdatedPieces,Win):-
 	getCoord(X , Y , Board),
 	getPiece(Piece , AvailablePieces),
-	move( Board ,  Player , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard).
+	move( Board ,  _Player , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard),
+	checkWin(Board,X,Y,Win).
 
 
 finishMove(Board , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard):-
 	removePiece(Piece , AvailablePieces , UpdatedPieces),
-	replace(Board, X , Y, Piece, NewBoard),
-	checkWin(NewBoard , X , Y ,Win).
+	replace(Board, X , Y, Piece, NewBoard).
 
 move( Board ,  _Player , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard):-
 	pieceRuleValidation(Board , X , Y , Piece),

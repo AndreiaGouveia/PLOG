@@ -6,8 +6,8 @@ won(Counter,0,Counter).
 
 playerPlay(Board , Counter , WhitePieces,NewBoard,NewWhitePieces,Counter1):-
         printBoard(Board),
-        getPlay(Board , NewBoard , WhitePieces , NewWhitePieces,X),
-        won(Counter,X,NewCounter),
+        getPlay(Board , NewBoard , WhitePieces , NewWhitePieces,Win),
+        won(Counter,Win,NewCounter),
         Counter1 is NewCounter + 1.
 
 pcPlay(Board,Counter,Pieces,NewBoard,NewPieces,Counter1):-
@@ -15,7 +15,8 @@ pcPlay(Board,Counter,Pieces,NewBoard,NewPieces,Counter1):-
         valid_moves(Board, ListOfMoves, Pieces , Piece , 1),
         choose_move( Board , 0 , X , Y , ListOfMoves),
         finishMove(Board , X , Y , Piece , Pieces , NewPieces , NewBoard),
-        won(Counter,X,NewCounter),
+        checkWin(NewBoard,X,Y,Win),
+        won(Counter,Win,NewCounter),
         Counter1 is NewCounter + 1.
 
 
@@ -40,7 +41,7 @@ personVSperson(black,Board , Counter , WhitePieces, BlackPieces):-
 
 % ================ Person vs Computer ======================
 
-personVSpc(_PlayerorBot,_Board , 16 , _WhitePieces, _BlackPieces):-
+personVSpc(_PlayerorBot,Board , 16 , _WhitePieces, _BlackPieces):-
         printBoard(Board),
         write('\n Game over!\n').
 
@@ -54,12 +55,12 @@ personVSpc(player,Board , Counter , WhitePieces, BlackPieces):-
 personVSpc(bot,Board , Counter , WhitePieces, BlackPieces):-
         Counter<16,
         pcPlay(Board,Counter,BlackPieces,NewBoard,NewBlackPieces,Counter1),
-        personVSpc(player,Board , Counter1 , WhitePieces, NewBlackPieces).
+        personVSpc(player,NewBoard , Counter1 , WhitePieces, NewBlackPieces).
 
 
 % ================ Computer vs Computer ======================
 
-pcVSpc(Board , 16, _WhitePieces , _BlackPieces):-
+pcVSpc(_ ,Board , 16, _WhitePieces , _BlackPieces):-
         printBoard(Board),
         write('\n Game over!\n').
 
@@ -73,4 +74,4 @@ pcVSpc(pc1,Board , Counter, WhitePieces , BlackPieces):-
 pcVSpc(pc2,Board , Counter, WhitePieces , BlackPieces):-
         Counter<16,
         pcPlay(Board,Counter,BlackPieces,NewBoard,NewBlackPieces,Counter1),
-        pcVSpc(pc2,NewBoard , Counter1, WhitePieces , NewBlackPieces).
+        pcVSpc(pc1,NewBoard , Counter1, WhitePieces , NewBlackPieces).

@@ -32,9 +32,9 @@ menuChoice(_):- % invalid input
         menus.
 
 % ========== Init game option ==================
-gameChoice(1 , InitialBoard , BlackPieces , WhitePieces):- personVSperson(0,InitialBoard , 0, WhitePieces , BlackPieces) , menus. % person vs person
-gameChoice(2 , InitialBoard , BlackPieces , WhitePieces):- personVSpc(0,InitialBoard , 0 , WhitePieces, BlackPieces) , menus. % person vs pc
-gameChoice(3 , InitialBoard , BlackPieces , WhitePieces):-  pcVSpc(0,InitialBoard, 0 , WhitePieces , BlackPieces) , menus. % pc vs pc
+gameChoice(1 , InitialBoard , BlackPieces , WhitePieces):- personVSperson(white,InitialBoard , 0, WhitePieces , BlackPieces) , menus. % person vs person
+gameChoice(2 , InitialBoard , BlackPieces , WhitePieces):- personVSpc(player,InitialBoard , 0 , WhitePieces, BlackPieces) , menus. % person vs pc
+gameChoice(3 , InitialBoard , BlackPieces , WhitePieces):-  pcVSpc(pc1,InitialBoard, 0 , WhitePieces , BlackPieces) , menus. % pc vs pc
 gameChoice(_ , _InitialBoard , _BlackPieces , _WhitePieces):- menuChoice(1). % invalid input
 
 % ============= Menus Display =====================
