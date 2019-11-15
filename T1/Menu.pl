@@ -1,6 +1,6 @@
 menus:- % First Menu
         repeat,
-        displayMainMenu,
+      %  displayMainMenu,
         nl,
         read_line([H|T]),
         length(T,0),
@@ -16,7 +16,7 @@ menuChoice(1):- % start game
         piecesBlack(BlackPieces,X1),
         piecesWhite(WhitePieces,X1),
         repeat,
-        displayGameMenu,
+      %  displayGameMenu,
         nl,
         read_line([H|T]),
         length(T,0),

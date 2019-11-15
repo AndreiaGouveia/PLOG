@@ -117,29 +117,10 @@ validMove(X , Y , List):-
 validMove(_,_,_):-
 	write('\n Not a valid move.'),
 	fail.
-/*
-validMove( 1 , [H|_]):-
-	H==0,!.
-
-validMove( X , [_|T]):-
-	X>1,
-	X1 is X - 1,
-	validMove(X1 , T).
-
-validMove(X , 1 , [H|_]):-
-	validMove( X , H).
-
-validMove(X , Y , [_|T]):-
-	Y>1,
-	Y1 is Y - 1,
-	validMove( X , Y1 , T).	
-*/
 % === checks if piece is valid 
-%validPiece(Piece, [Piece|_T]).
 
 validPiece(Piece,List):- % [_H|T]):-
 	member(Piece,List).
-	%validPiece(Piece , T).
 
 pieceRuleValidation(Board , X , Y , Piece):-
 	pieceCheckR(Board , Y , Piece),
@@ -147,13 +128,6 @@ pieceRuleValidation(Board , X , Y , Piece):-
 	getSquare(Board,X,Y,List),
 	pieceCheck(List, Piece).
 % === removes piece from available pieces === 
-/*removePiece(_Piece, [] , []).
-
-removePiece(Piece, [Piece|T] , N):-
-	removePiece(0, T , N).
-
-removePiece(Piece, [H|T] , [H|N]):-
-	removePiece(Piece , T , N).*/
 
 removePiece(Piece, List , List1):-
 	append(La,[Piece|Lb],List),  

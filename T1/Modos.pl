@@ -15,7 +15,7 @@ pcPlay(Board,Counter,Pieces,NewBoard,NewPieces,Counter1):-
         printBoard(Board),
         showPieces(Pieces),
         valid_moves(Board, ListOfMoves, Pieces , Piece , 1),
-        choose_move( Board , 0 , X , Y , ListOfMoves),
+        choose_move( Board , 0 , X , Y , Value , ListOfMoves),
         finishMove(Board , X , Y , Piece , Pieces , NewPieces , NewBoard),
         checkWin(NewBoard,X,Y,Win),
         won(Counter,Win,NewCounter),
