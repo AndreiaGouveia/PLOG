@@ -42,10 +42,28 @@ getBestMove(List , Move):-
 getMove(V-X-Y, X , Y).
 
 
+%     RANDOM
 choose_move(_Board , 0 , _X , _Y , _Value, []):-
     write('\n ---- No available moves ----').
 
-choose_move(Board , 0 , X , Y , Value , List):-
+choose_move(Board , 0 , X , Y , Value , [H|T]):-
+    getMove(H , X , Y ),
+    validMove(X , Y , Board),
+    !,
+    write('\nx: '),
+    write(X),
+    write('\ny: '),
+    write(Y).
+
+choose_move(Board , 0 , X , Y , Value, [_H|T]):-
+    choose_move(Board , 0 , X , Y , Value, T).
+
+
+%       WITH VALUE
+choose_move(_Board , 1 , _X , _Y , _Value, []):-
+    write('\n ---- No available moves ----').
+
+choose_move(Board , 1 , X , Y , Value , List):-
     getBestMove( List , Move),
     getMove(Move , X , Y ),
     validMove(X , Y , Board),
@@ -53,12 +71,10 @@ choose_move(Board , 0 , X , Y , Value , List):-
     write('\nx: '),
     write(X),
     write('\ny: '),
-    write(Y),
-    write('\nValue: '),
-    write(Value).
+    write(Y).
 
-choose_move(Board , 0 , X , Y , Value, [_H|T]):-
-    choose_move(Board , 0 , X , Y , Value, T).
+choose_move(Board , 1 , X , Y , Value, [_H|T]):-
+    choose_move(Board , 1 , X , Y , Value, T).
 
 
 % ==== VALUE FUNCTIONS ===
