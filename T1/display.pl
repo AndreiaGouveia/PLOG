@@ -1,7 +1,6 @@
 % Boards and Pieces
 initialBoard(
                 [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]).
-               % [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]).
 
 piecesBlack(List,X):-
         isEmpty(L),createPieces(L,X,1,List).

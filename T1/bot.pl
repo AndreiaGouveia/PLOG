@@ -1,3 +1,5 @@
+:- use_module(library(lists)).
+
 % === obtenção das jogadas validas ===
 isEmptyMoves([]).
 
@@ -41,3 +43,57 @@ choose_move(Board , 0 , X , Y , [H|T]):-
     choose_move(Board , 0 , X , Y , T).
     
 
+choose_move(Board , 0 , X , Y , [H|T]):- 
+    value(Board , Piece , X , Y , 0).
+
+
+% ==== VALUE FUNCTIONS ===
+% == sumList(Line, Counter1),
+
+are_identical(X, Y) :-
+    X == Y.
+
+filterList(Elem, List, Number) :-
+    exclude(are_identical(Elem), List, FilteredList),
+    length(FilteredList , Number).
+
+checkLine(Line , Value , ZeroCounter):-
+    filterList(0 , Line , ZeroCounter),
+    checkLines ( Line , Value , ZeroCounter).
+
+checkLines(Line, 0 , 0).
+
+checkLines(Line, 10 , 1).
+
+checkLines(Line, Value , 2).
+
+checkLines(Line, Value , 3).
+
+checkLines([H|T] , Counter):-
+    checkLine(H , Value1),
+    Counter1 is Counter + Value1,
+    checkLines(T , Counter1).
+
+checkLines([H|T] , Counter):-
+    checkLines(T , Counter).
+
+value(NewBoard , Value):-
+    checkLines(NewBoard , Counter),
+    write('\nVALUE ROWS : '),
+    write(Counter),
+    transpose(NewBoard , TransposedBoard),
+    checkLine(TransposedBoard , Counter1),
+    write('\nVALUE COLUMS : '),
+    write(Counter1),
+    atributeBigger(Counter , Counter1 , Value),
+    write('\nFINAL VALUE : '),
+    write(Counter).
+
+atributeBigger(Rows , Colums , Rows):-
+    Rows>=Colums,
+    !.
+
+atributeBigger(Rows , Colums , Colums):-
+    Colums >= Rows.
+
+    
