@@ -185,12 +185,10 @@ replace_column( [C|Cs] , X , Piece , [C|Ct] ) :-
 
 
 % === function that gets the play ===
-getPlay(Board , NewBoard , AvailablePieces , UpdatedPieces,Win):-
+getPlay(Board , NewBoard , AvailablePieces , UpdatedPieces):-
 	getCoord(X , Y , Board),
 	getPiece(Piece , AvailablePieces),
-	move( Board ,  _Player , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard),
-	checkWin(NewBoard,X,Y,Win).
-
+	move( Board ,  _Player , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard).
 
 finishMove(Board , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard):-
 	removePiece(Piece , AvailablePieces , UpdatedPieces),
@@ -206,28 +204,43 @@ move( _Board ,  _Player , _X , _Y , _Piece , _AvailablePieces , _UpdatedPieces):
 
 % === function that checks if player has won === 
 
-checkWin(Board , _X , Y ,Win):- % win from row
+checkWin(Board , _X , Y):- % win from row
 	nth1(Y,Board,Row),
-	winList(Row, 1),
-	!,
-	write('\n You won! \n'),
-	Win is 1.
+	winList(Row, 1).
 
-checkWin(Board , X , _Y ,Win):- % win from column
+checkWin(Board , X , _Y ):- % win from column
 	transpose(Board, Board1),
 	nth1(X,Board1,Row),
-	winList(Row, 1),
-	!,
-	write('\n You won! \n'),
-	Win is 1.
+	winList(Row, 1).
 
-checkWin(Board , X , Y ,Win):- % win from square
+checkWin(Board , X , Y):- % win from square
 	getSquare(Board,X,Y,List),
-	winList(List, 1),
-	!,
-	write('\n You won! \n'),
-	Win is 1.
+	winList(List, 1).
 
-checkWin(_Board , _X , _Y ,Win):-
-	write('\n Keep playing! \n'),
-	Win is 0.
+gameOver(Board,_Counter,NewCounter):-
+	checkWin(Board,1,1),
+	!,
+	NewCounter is 15,
+	write('\n You won! \n').
+
+gameOver(Board,_Counter,NewCounter):-
+	checkWin(Board,2,3),
+	!,
+	NewCounter is 15,
+	write('\n You won! \n').
+
+gameOver(Board,_Counter,NewCounter):-
+	checkWin(Board,3,2),
+	!,
+	NewCounter is 15,
+	write('\n You won! \n').
+
+gameOver(Board,_Counter,NewCounter):-
+	checkWin(Board,4,4),
+	!,
+	NewCounter is 15,
+	write('\n You won! \n').
+
+gameOver(_Board,Counter,NewCounter):-
+	NewCounter is Counter,
+	write('\n Keep playing! \n').

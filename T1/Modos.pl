@@ -1,14 +1,10 @@
-won(_,1,Counter1):-
-        Counter1 is 15.
-won(Counter,0,Counter).
-
 % =============== Auxiliary Functions ====================
 
 playerPlay(Board , Counter , Pieces,NewBoard,NewPieces,Counter1):-
         printBoard(Board),
         showPieces(Pieces),
-        getPlay(Board , NewBoard , Pieces , NewPieces,Win),
-        won(Counter,Win,NewCounter),
+        getPlay(Board , NewBoard , Pieces , NewPieces),
+        game_over(NewBoard,Counter,NewCounter),
         Counter1 is NewCounter + 1.
 
 pcPlay(Board,Counter,Pieces,NewBoard,NewPieces,Counter1):-
@@ -17,8 +13,7 @@ pcPlay(Board,Counter,Pieces,NewBoard,NewPieces,Counter1):-
         valid_moves(Board, ListOfMoves, Pieces , Piece , 1),
         choose_move( Board , 0 , X , Y , ListOfMoves),
         finishMove(Board , X , Y , Piece , Pieces , NewPieces , NewBoard),
-        checkWin(NewBoard,X,Y,Win),
-        won(Counter,Win,NewCounter),
+        game_over(NewBoard,Counter,NewCounter),
         Counter1 is NewCounter + 1.
 
 
