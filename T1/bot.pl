@@ -78,24 +78,24 @@ are_identical(X, Y) :- % sees if 2 elements are identical
 
 filterList(Elem, List, Number) :- % sees how many 0s
     exclude(are_identical(Elem), List, FilteredList),
-    length(FilteredList , Number),
-    write('\nLength: '),
-    write(Number).
+    length(FilteredList , Number).
+   /* write('\nLength: '),
+    write(Number).*/
 
 atributeValue(_Line, 0 , 4):- !. % if row if full
 atributeValue(_Line, 5 , 1):- !. % missing 3 piece - middle option
 
 atributeValue(Line, 1 , 2):- % missing 2 pieces - worst option
     list_sum(Line , Sum),
-    write('\nSum2: '),
-    write(Sum),
+    /*write('\nSum2: '),
+    write(Sum),*/
     member(Sum , [3,4,5,6,7]), % if not, play is not smart
     !.
 
 atributeValue(Line, 10 , 3):- % missing 1 pieces - best option
     list_sum(Line , Sum),
-    write('\nSum3: '),
-    write(Sum),
+    /*write('\nSum3: '),
+    write(Sum),*/
     member(Sum , [6,7,8,9]), % if not, play is not smart
     !.
 atributeValue(_Line, 5 , 0):- !. % if row is isEmpty
@@ -112,20 +112,20 @@ checkLines([] , Counter , Counter).
 checkLines([H|T] , Counter , FinalValue):-
     checkLine(H , Value1),
     atributeBigger(Value1, Counter, Result),
-    write('alive'),
+    % write('alive'),
     checkLines(T , Result , FinalValue).
 
 value(NewBoard , Value):-
     checkLines(NewBoard , 0 , Counter),
-    write('\nVALUE ROWS : '),
-    write(Counter),
+    /*write('\nVALUE ROWS : '),
+    write(Counter),*/
     transpose(NewBoard , TransposedBoard),
     checkLines(TransposedBoard , 0 , Counter1),
-    write('\nVALUE COLUMS : '),
-    write(Counter1),
-    atributeBigger(Counter , Counter1 , Value),
-    write('\nFINAL VALUE : '),
-    write(Counter).
+    /*write('\nVALUE COLUMS : '),
+    write(Counter1),*/
+    atributeBigger(Counter , Counter1 , Value).
+   /* write('\nFINAL VALUE : '),
+    write(Counter).*/
 
 atributeBigger(Rows , Colums , Rows):-
     Rows>=Colums,
