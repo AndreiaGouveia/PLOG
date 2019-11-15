@@ -49,13 +49,6 @@ winList( [H|T] , Counter):-
 	Counter1 is Counter * Value1,
 	winList( T , Counter1).
 
-/* nth1( [H|_] , 1 , H).
-
-nth1( [_|T], Y , Row):-
-	Y>0,
-	Y1 is Y-1,
-	nth1( T , Y1 , Row). */
-
 % === Checks if piece is valid in row===
 
 pieceCheckR(Board , Y , Piece):-
@@ -73,47 +66,8 @@ pieceCheckRAux(Board, Y, Piece):-
 	\+member(Piece, Row).
 
 
-/*
-pieceCheckR([], _Piece).
-
-pieceCheckR( [H|T] , Piece):-
-	H\=Piece,
-	Piece1 is Piece mod 5,
-	Value1 is H mod 5,
-	Value1\=Piece1,
-	pieceCheckR( T , Piece).
-
-pieceCheckR( [H|T] , Piece):-
-	H==Piece,
-	pieceCheckR( T , Piece).
-
-pieceCheck( [H|_] , 1 , Piece):-
-	pieceCheckR(H , Piece).
-
-pieceCheck( [_|T], Y , Piece ):-
-	Y>1,
-	Y1 is Y-1,
-	pieceCheck( T , Y1 , Piece).*/
-
-
-
 % === Win from column ===
-/*
-winColumnR([H|_T] , H , 1):-!.
 
-winColumnR([_H|T] , Counter , Y):-
-	Y>1,
-	Y1 is Y - 1 ,
-	winColumnR(T, Counter , Y1).
-
-winColumn([] , 24 , _Y).
-
-winColumn([H|T] , FinalNumber , Y ):- 
-	winColumnR(H , Counter , Y),
-	Value is Counter mod 5,
-	Counter1 is FinalNumber * Value,
-	winColumn(T , Counter1 , Y).
-*/
 % === Checks if piece is valid in column ===
 
 pieceCheckC(Board , X , Piece):-
@@ -131,30 +85,6 @@ pieceCheckCAux(Board, X, Piece):-
 	nth1(X,Board1,Column),
 	\+member(Piece, Column).
 
-/*
-checkPieceColumnR([H|_T] , H , 1):-!.
-
-checkPieceColumnR([_H|T] , Counter , Y):-
-	Y>1,
-	Y1 is Y - 1 ,
-	checkPieceColumnR(T, Counter , Y1).
-
-checkPieceColumn([] , _Y , _Piece).
-
-checkPieceColumn([H|T] , Y , Piece):- 
-	checkPieceColumnR(H , Counter , Y),
-	Piece\=	Counter, 
-	Value is Counter mod 5,
-	Piece\=Value,
-	Value1 is Piece mod 5,
-	Value1\=Value,
-	checkPieceColumn(T , Y , Piece).
-
-checkPieceColumn([H|T] , Y , Piece):- 
-	checkPieceColumnR(H , Counter , Y),
-	Piece==Counter, 
-	checkPieceColumn(T , Y , Piece).
-*/
 % === Win from square ===
 
 getSquare(Board,X,Y,[Value1,Value2,Value3,Value4]):-
@@ -169,12 +99,12 @@ getSquare(Board,X,Y,[Value1,Value2,Value3,Value4]):-
 	nth1(X1,Row1,Value3),
 	nth1(X2,Row1,Value4).
 
-pieceCheckS(List , Piece):-
+pieceCheck(List , Piece):-
 	Piece>5,
 	Piece1 is Piece-5,
 	\+member(Piece1, List).
 
-pieceCheckS(List , Piece):-
+pieceCheck(List , Piece):-
 	Piece<5,
 	Piece1 is Piece+5,
 	\+member(Piece1, List).
@@ -203,6 +133,11 @@ validPiece(Piece, [Piece|_T]).
 validPiece(Piece, [_H|T]):-
 	validPiece(Piece , T).
 
+pieceRuleValidation(Board , X , Y , Piece):-
+	pieceCheckR(Board , Y , Piece),
+	pieceCheckC(Board , X , Piece),
+	getSquare(Board,X,Y,List),
+	pieceCheck(List, Piece).
 % === removes piece from available pieces === 
 removePiece(_Piece, [] , []).
 
@@ -238,19 +173,23 @@ replace_column( [C|Cs] , X , Piece , [C|Ct] ) :-
 
 
 % === function that gets the play ===
-getPlay(Board, _Player , NewBoard , AvailablePieces , UpdatedPieces,Win):-
+getPlay(Board , NewBoard , AvailablePieces , UpdatedPieces,Win):-
 	getCoord(X , Y , Board),
 	getPiece(Piece , AvailablePieces),
-	pieceCheckR(Board , Y , Piece),
-	pieceCheckC(Board , X , Piece),
-	getSquare(Board,X,Y,List),
-	pieceCheckS(List, Piece),
-	!,
+	move( Board ,  Player , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard).
+
+
+finishMove(Board , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard):-
 	removePiece(Piece , AvailablePieces , UpdatedPieces),
 	replace(Board, X , Y, Piece, NewBoard),
 	checkWin(NewBoard , X , Y ,Win).
 
-getPlay(_Board, _Player , _NewBoard , _AvailablePieces , _UpdatedPieces):-
+move( Board ,  _Player , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard):-
+	pieceRuleValidation(Board , X , Y , Piece),
+	!,
+	finishMove(Board , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard).
+
+move( _Board ,  _Player , _X , _Y , _Piece , _AvailablePieces , _UpdatedPieces):-
 	write("\n Invalid Play\n").
 
 % === function that checks if player has won === 
