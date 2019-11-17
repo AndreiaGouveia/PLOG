@@ -1,22 +1,37 @@
 % =============== Auxiliary Functions ====================
 
-playerPlay(Board , Counter , Pieces,NewBoard,NewPieces,Counter1):-
-        printBoard(Board),
-        showPieces(Pieces),
-        getPlay(Board , NewBoard , Pieces , NewPieces),
-        game_over(NewBoard,Counter,NewCounter),
-        Counter1 is NewCounter + 1.
-
-pcPlay(Smart,Board,Counter,Pieces,NewBoard,NewPieces1,Counter1):-
+playerPlay(Board , Counter , Pieces, NewBoard, NewPieces, Counter1):-
         printBoard(Board),
         showPieces(Pieces),
         remove_dups(Pieces,NewPieces),
         valid_moves(Board, [], NewPieces , ListOfMoves),
-        choose_move( Board , Smart, X , Y, Piece, ListOfMoves),
-        finishMove(Board , X , Y , Piece , Pieces , NewPieces1 , NewBoard),
+        length(ListOfMoves, L),
+        L>0,
+        getPlay(Board , NewBoard , Pieces , NewPieces),
         game_over(NewBoard,Counter,NewCounter),
         Counter1 is NewCounter + 1.
 
+playerPlay(Board , Counter , Pieces, Board, Pieces, Counter1):-
+        write('\n There are no available moves!\n'),
+        game_over(Board,Counter,NewCounter),
+        Counter1 is NewCounter + 1.
+
+pcPlay(Smart,Board,Counter,Pieces,NewBoard,NewPieces,Counter1):-
+        printBoard(Board),
+        showPieces(Pieces),
+        remove_dups(Pieces,NewPieces1),
+        valid_moves(Board, [], NewPieces1 , ListOfMoves),
+        length(ListOfMoves, L),
+        L>0,
+        choose_move( Board , Smart, X , Y, Piece, ListOfMoves),
+        finishMove(Board , X , Y , Piece , Pieces , NewPieces , NewBoard),
+        game_over(NewBoard,Counter,NewCounter),
+        Counter1 is NewCounter + 1.
+
+pcPlay(_Smart, Board, Counter, Pieces, Board, Pieces,Counter1):-
+        write('\n There are no available moves!\n'),
+        game_over(Board,Counter,NewCounter),
+        Counter1 is NewCounter + 1.
 
 % ================ Person vs Person ======================
 
