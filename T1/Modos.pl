@@ -3,8 +3,8 @@
 playerPlay(Board , Counter , Pieces, NewBoard, NewPieces, Counter1):-
         printBoard(Board),
         showPieces(Pieces),
-        remove_dups(Pieces,NewPieces),
-        valid_moves(Board, [], NewPieces , ListOfMoves),
+        remove_dups(Pieces,NewPieces1),
+        valid_moves(Board, [], NewPieces1, ListOfMoves),
         length(ListOfMoves, L),
         L>0,
         getPlay(Board , NewBoard , Pieces , NewPieces),

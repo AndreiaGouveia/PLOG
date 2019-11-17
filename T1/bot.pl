@@ -1,14 +1,7 @@
-:- use_module(library(lists)).
-
 % === obtenção das jogadas validas ===
-
-printL([]).%//TODO TEMP
-printL([H|T]):-
-    write(H),nl,printL(T).
 
 valid_moves(_Board, ListOfMoves, Pieces , FinalList):-
     isEmpty(Pieces),
-    printL(ListOfMoves),
     copy(ListOfMoves,FinalList).
 
 valid_moves(Board, ListOfMoves, [Piece|T] , FinalList):-
@@ -56,7 +49,8 @@ choose_move(Board , random , X , Y, Piece, ListOfMoves):-
     write('\n Line: '),
     write(Y),
     write('\n Piece: '),
-    write(Piece),
+    piece(Piece,C1),
+    write(C1),
     nl.
 
 %       WITH VALUE
@@ -75,12 +69,9 @@ choose_move(Board , smart , X , Y, Piece, List):-
     write('\n Line: '),
     write(Y),
     write('\n Piece: '),
-    write(Piece),
+    piece(Piece,C1),
+    write(C1),
     nl.
-/*
-choose_move(Board , Smart , X , Y, Piece, [_H|T]):-
-    choose_move(Board , Smart , X , Y, Piece, T).
-*/
 
 % ==== VALUE FUNCTIONS ===
 list_sum([], 0).

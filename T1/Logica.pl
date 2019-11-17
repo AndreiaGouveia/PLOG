@@ -36,6 +36,18 @@ getCoord(X , Y , Board):-
 	getColumn(X,Size),
 	validMove(X,Y,Board).
 
+getSquare(Board,X,Y,[Value1,Value2,Value3,Value4]):-
+	X1 is X + (X mod 2) - 1,
+	Y1 is Y + (Y mod 2) - 1,
+	Y2 is Y1+1,
+	X2 is X1+1,
+	nth1(Y1,Board,Row),
+	nth1(Y2,Board,Row1),
+	nth1(X1,Row,Value1),
+	nth1(X2,Row,Value2),
+	nth1(X1,Row1,Value3),
+	nth1(X2,Row1,Value4).
+
 % ============= 
 % === RULES ===
 % =============
@@ -65,9 +77,6 @@ pieceCheckRAux(Board, Y, Piece):-
 	nth1(Y,Board,Row),
 	\+member(Piece, Row).
 
-
-% === Win from column ===
-
 % === Checks if piece is valid in column ===
 
 pieceCheckC(Board , X , Piece):-
@@ -84,20 +93,6 @@ pieceCheckCAux(Board, X, Piece):-
 	transpose(Board,Board1),
 	nth1(X,Board1,Column),
 	\+member(Piece, Column).
-
-% === Win from square ===
-
-getSquare(Board,X,Y,[Value1,Value2,Value3,Value4]):-
-	X1 is X + (X mod 2) - 1,
-	Y1 is Y + (Y mod 2) - 1,
-	Y2 is Y1+1,
-	X2 is X1+1,
-	nth1(Y1,Board,Row),
-	nth1(Y2,Board,Row1),
-	nth1(X1,Row,Value1),
-	nth1(X2,Row,Value2),
-	nth1(X1,Row1,Value3),
-	nth1(X2,Row1,Value4).
 
 pieceCheck(List , Piece):-
 	Piece>5,
