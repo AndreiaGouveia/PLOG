@@ -111,15 +111,18 @@ pieceCheck(List , Piece):-
 
 % === checks if move is valid ===
 validMove(X , Y , List):-
-	nth1(Y,List,NewList),
-	nth1(X,NewList,0).
+	isEmptyCell(X , Y , List).
 
-validMove(_,_,_):-
+validMove(_ , _, _):- 
 	write('\n Not a valid move.'),
 	fail.
-% === checks if piece is valid 
 
-validPiece(Piece,List):- % [_H|T]):-
+isEmptyCell(X , Y , List):-
+	nth1(Y,List,NewList),
+	nth1(X,NewList,0).	
+
+% === checks if piece is valid 
+validPiece(Piece,List):- 
 	member(Piece,List).
 
 pieceRuleValidation(Board , X , Y , Piece):-
@@ -127,11 +130,12 @@ pieceRuleValidation(Board , X , Y , Piece):-
 	pieceCheckC(Board , X , Piece),
 	getSquare(Board,X,Y,List),
 	pieceCheck(List, Piece).
-% === removes piece from available pieces === 
 
+% === removes piece from available pieces === 
 removePiece(Piece, List , List1):-
 	append(La,[Piece|Lb],List),  
-	append(La,Lb,List1).
+	append(La,Lb,List1)
+	,!.
 
 % === ask for piece ===
 getPiece(Piece , AvailablePieces):-
@@ -145,17 +149,19 @@ getPiece(Piece , AvailablePieces):-
 %===  functions to insert piece in board ===
 
 replace([B|Bt] , X , 1 , Piece, [N|Bt]):-
-	replace_column(B, X , Piece , N).
+	replace_column(B, X , Piece , N),!.
 
 replace([B|Bt] , X, Y , Piece , [B|Nt]):-
+	Y>1,
 	Y1 is Y - 1,
 	replace(Bt, X , Y1 , Piece, Nt).
 
-replace_column( [_|Cs] , 1 , Piece , [Piece|Cs] ) .
+replace_column( [_|Cs] , 1 , Piece , [Piece|Cs]) .
 
 replace_column( [C|Cs] , X , Piece , [C|Ct] ) :- 
-  X1 is X-1 ,                               
-  replace_column( Cs , X1 , Piece , Ct ).                                          
+	X>1,
+  	X1 is X-1 ,                               
+  	replace_column( Cs , X1 , Piece , Ct ).                                          
 
 
 % === function that gets the play ===

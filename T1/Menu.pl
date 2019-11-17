@@ -4,7 +4,6 @@ menus:- % First Menu
         nl,
         read_line([H|T]),
         length(T,0),
-        H >= 48, H =< 57, %//TODO delete this? its optional, forces between 0-9
         !,
         Input is H-48,
         menuChoice(Input).
@@ -35,18 +34,18 @@ menuChoice(3):- % credits
         menus.
 
 menuChoice(4):- % exitgame
-        write('Thanks for playing!').
+        write('\nThanks for playing!\n').
 
 menuChoice(_):- % invalid input
-        write('Must choose between 1 or 2\n'),
+        write('Must choose between 1 or 4\n'),
         menus.
 
 % ========== Init game option ==================
 gameChoice(1 , InitialBoard , BlackPieces , WhitePieces):- personVSperson(white,InitialBoard , 0, WhitePieces , BlackPieces) , menus. % person vs person
-gameChoice(2 , InitialBoard , BlackPieces , WhitePieces):- personVSpc(0,player,InitialBoard , 0 , WhitePieces, BlackPieces) , menus. % person vs pc (easy)
-gameChoice(3 , InitialBoard , BlackPieces , WhitePieces):-  personVSpc(1,player,InitialBoard, 0 , WhitePieces , BlackPieces) , menus. % person vs pc (hard)
-gameChoice(4 , InitialBoard , BlackPieces , WhitePieces):-  pcVSpc(0,pc1,InitialBoard, 0 , WhitePieces , BlackPieces) , menus. % pc vs pc (easy)
-gameChoice(5 , InitialBoard , BlackPieces , WhitePieces):-  pcVSpc(1,pc1,InitialBoard, 0 , WhitePieces , BlackPieces) , menus. % pc vs pc (hard)
+gameChoice(2 , InitialBoard , BlackPieces , WhitePieces):- personVSpc(random,player,InitialBoard , 0 , WhitePieces, BlackPieces) , menus. % person vs pc (easy)
+gameChoice(3 , InitialBoard , BlackPieces , WhitePieces):-  personVSpc(smart,player,InitialBoard, 0 , WhitePieces , BlackPieces) , menus. % person vs pc (hard)
+gameChoice(4 , InitialBoard , BlackPieces , WhitePieces):-  pcVSpc(random,pc1,InitialBoard, 0 , WhitePieces , BlackPieces) , menus. % pc vs pc (easy)
+gameChoice(5 , InitialBoard , BlackPieces , WhitePieces):-  pcVSpc(smart,pc1,InitialBoard, 0 , WhitePieces , BlackPieces) , menus. % pc vs pc (hard)
 gameChoice(_ , _InitialBoard , _BlackPieces , _WhitePieces):- menuChoice(1). % invalid input
 
 % ============= Menus Display =====================
@@ -104,7 +103,7 @@ displayInstructions:-
         write('| who owns the other pieces of that winning  |\n'),
         write('| move.                                      |\n'),
         write('|                    (Press Enter to Escape) |\n'),
-        write(' --------------------------------------------\n').
+        write(' --------------------------------------------\n\n').
 
 displayCredits:-
         write('\n ------------------------------------------\n'),
@@ -117,4 +116,4 @@ displayCredits:-
         write('|                           Joao Araujo      |\n'),
         write('|                                            |\n'),
         write('|                    (Press Enter to Escape) |\n'),
-        write(' --------------------------------------------\n').
+        write(' --------------------------------------------\n\n').

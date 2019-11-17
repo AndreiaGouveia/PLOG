@@ -7,12 +7,13 @@ playerPlay(Board , Counter , Pieces,NewBoard,NewPieces,Counter1):-
         game_over(NewBoard,Counter,NewCounter),
         Counter1 is NewCounter + 1.
 
-pcPlay(Smart,Board,Counter,Pieces,NewBoard,NewPieces,Counter1):-
+pcPlay(Smart,Board,Counter,Pieces,NewBoard,NewPieces1,Counter1):-
         printBoard(Board),
         showPieces(Pieces),
-        valid_moves(Board, [], Pieces , ListOfMoves),
+        remove_dups(Pieces,NewPieces),
+        valid_moves(Board, [], NewPieces , ListOfMoves),
         choose_move( Board , Smart, X , Y, Piece, ListOfMoves),
-        finishMove(Board , X , Y , Piece , Pieces , NewPieces , NewBoard),
+        finishMove(Board , X , Y , Piece , Pieces , NewPieces1 , NewBoard),
         game_over(NewBoard,Counter,NewCounter),
         Counter1 is NewCounter + 1.
 

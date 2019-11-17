@@ -12,7 +12,7 @@ valid_moves(_Board, ListOfMoves, Pieces , FinalList):-
     copy(ListOfMoves,FinalList).
 
 valid_moves(Board, ListOfMoves, [Piece|T] , FinalList):-
-    findall(V-X-Y-Piece, (pieceRuleValidation(Board , X , Y , Piece),finishMove(Board , X , Y , Piece , [Piece|T] , _NewPieces , NewBoard),value(NewBoard , V)), List),
+    findall(V-X-Y-Piece, (pieceRuleValidation(Board , X , Y , Piece),isEmptyCell(X,Y,Board),finishMove(Board , X , Y , Piece , [Piece|T] , _NewPieces , NewBoard),value(NewBoard , V)), List),
     append(ListOfMoves, List, NewList),
     valid_moves(Board , NewList , T , FinalList).
 
@@ -41,36 +41,46 @@ getMove(_V-X-Y-Piece, X , Y, Piece).
 
 
 %     RANDOM
-choose_move(_Board , 0 , _X , _Y , _Piece, []):-
+choose_move(_Board , random , _X , _Y , _Piece, []):-
     write('\n ---- No available moves ----').
 
-choose_move(Board , 0 , X , Y, Piece, ListOfMoves):-
+choose_move(Board , random , X , Y, Piece, ListOfMoves):-
     random_select(Elem,ListOfMoves,_),
     getMove(Elem , X , Y , Piece),
     validMove(X , Y , Board),
     !,
-    write('\nx: '),
-    write(X),
-    write('\ny: '),
-    write(Y).
+    write('\n Column: '),
+    X1 is X + 64,
+	char_code(C,X1),
+    write(C),
+    write('\n Line: '),
+    write(Y),
+    write('\n Piece: '),
+    write(Piece),
+    nl.
 
 %       WITH VALUE
-choose_move(_Board , 1 , _X , _Y, _Piece, []):-
+choose_move(_Board , smart , _X , _Y, _Piece, []):-
     write('\n ---- No available moves ----').
 
-choose_move(Board , 1 , X , Y, Piece, List):-
+choose_move(Board , smart , X , Y, Piece, List):-
     getBestMove( List , _Move, BestMove),
     getMove(BestMove , X , Y , Piece),
     validMove(X , Y , Board),
     !,
-    write('\nx: '),
-    write(X),
-    write('\ny: '),
-    write(Y).
-
-choose_move(Board , UseValue , X , Y, Piece, [_H|T]):-
-    choose_move(Board , UseValue , X , Y, Piece, T).
-
+    write('\n Column: '),
+    X1 is X + 64,
+	char_code(C,X1),
+    write(C),
+    write('\n Line: '),
+    write(Y),
+    write('\n Piece: '),
+    write(Piece),
+    nl.
+/*
+choose_move(Board , Smart , X , Y, Piece, [_H|T]):-
+    choose_move(Board , Smart , X , Y, Piece, T).
+*/
 
 % ==== VALUE FUNCTIONS ===
 list_sum([], 0).
@@ -88,26 +98,32 @@ are_identical(X, Y) :- % sees if 2 elements are identical
 filterList(Elem, List, Number) :- % sees how many 0s
     exclude(are_identical(Elem), List, FilteredList),
     length(FilteredList , Number).
-   /* write('\nLength: '),
-    write(Number).*/
 
-atributeValue(_Line, 15 , 4):- !. % if row if full - best option
-atributeValue(_Line, 5 , 1):- !. % missing 3 piece - middle option
 
-atributeValue(Line, 6 , 2):- % missing 2 pieces - middle option
+atributeValue(_Line, 0 , 0):- !. % if row is isEmpty ignores value
+
+atributeValue(_Line, 5 , 1):- !. % 1 piece - middle option
+
+atributeValue(Line, 6 , 2):- % 2 different pieces - middle option
     list_sum(Line , Sum),
-    /*write('\nSum2: '),
-    write(Sum),*/
-    member(Sum , [3,4,5,6,7]), % if not, play is not smart
+    member(Sum , [3,4,5,6,7]), 
     !.
 
-atributeValue(Line, 1 , 3):- % missing 1 pieces - worst option
+atributeValue(_Line, 1 , 2):- !. % 2 pieces with repetitions - bad option
+
+atributeValue(Line, -1 , 3):- % 3 different pieces - worst option
     list_sum(Line , Sum),
-    /*write('\nSum3: '),
-    write(Sum),*/
-    member(Sum , [6,7,8,9]), % if not, play is not smart
+    member(Sum , [6,7,8,9]), 
     !.
-atributeValue(_Line, 5 , 0):- !. % if row is isEmpty
+
+atributeValue(_Line, 1 , 3):- !. % 3 pieces with repetitions - bad option
+
+atributeValue(Line, 15 , 4):- % 4 different pieces - best option
+    winList(Line,1),
+    !.
+
+atributeValue(_Line, 1 , 4):- !. % 4 pieces with repetition - bad option
+
 
 atributeValue(_Line , 0 , _Counter). % if anything else
 
@@ -119,8 +135,7 @@ checkLines([] , Counter , Counter).
 
 checkLines([H|T] , Counter , FinalValue):-
     checkLine(H , Value1),
-    atributeBigger(Value1, Counter, Result),
-    % write('alive'),
+    atributeBigger(Counter, Value1, Result),
     checkLines(T , Result , FinalValue).
 
 value(Board , Value):-
@@ -138,11 +153,16 @@ value(Board , Value):-
     checkLines([List1,List2,List3,List4] , 0 , Counter2),
     atributeBigger(Value1 , Counter2 , Value).
 
-atributeBigger(Rows , Colums , Rows):-
-    Rows>=Colums,
-    !.
+atributeBigger(-1,Value2,-1):-
+    Value2 \=15, !.
 
-atributeBigger(Rows , Colums , Colums):-
-    Colums >= Rows.
+atributeBigger(Value1,-1,-1):-
+    Value1 \=15, !.
+
+atributeBigger(Value1 , Value2 , Value1):-
+    Value1>=Value2, !.
+
+atributeBigger(Value1 , Value2 , Value2):-
+    Value2 >= Value1, !.
 
     
