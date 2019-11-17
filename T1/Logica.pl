@@ -1,4 +1,5 @@
 % === get coords ===
+%getLine(-Y, +Size)
 getLine(Y,Size):-
 	write('\n Line value must be between 1 and '),
 	write(Size),
@@ -9,6 +10,7 @@ getLine(Y,Size):-
 	Y=<Size,
 	Y>=1.
 
+%getColumn(-X, +Size)
 getColumn(X,Size):-
 	MaxCharCode is 96+Size,
 	char_code(Char,MaxCharCode),
@@ -19,23 +21,25 @@ getColumn(X,Size):-
 	length(T,0),
 	auxGetColumn(H,X,MaxCharCode).
 
-auxGetColumn(H,X,MaxCharCode):- %para minuscula
-	H=<MaxCharCode,
-	H>=97,
-	X is H-96.
+auxGetColumn(X, NewX, MaxCharCode):- %para minuscula
+	X=<MaxCharCode,
+	X>=97,
+	NewX is X-96.
 
-auxGetColumn(H,X,MaxCharCode):- %para maiuscula
-	H=<MaxCharCode-22,
-	H>=65,
-	X is H-64.
+auxGetColumn(X, NewX, MaxCharCode):- %para maiuscula
+	X=<MaxCharCode-22,
+	X>=65,
+	NewX is X-64.
 
-getCoord(X , Y , Board):-
+%getCoord(-X, -Y, +Board)
+getCoord(X, Y, Board):-
 	length(Board, Size),
 	repeat,
 	getLine(Y,Size),
 	getColumn(X,Size),
 	validMove(X,Y,Board).
 
+%getSquare(+Board, +X, +Y, -List)
 getSquare(Board,X,Y,[Value1,Value2,Value3,Value4]):-
 	X1 is X + (X mod 2) - 1,
 	Y1 is Y + (Y mod 2) - 1,
@@ -53,7 +57,8 @@ getSquare(Board,X,Y,[Value1,Value2,Value3,Value4]):-
 % =============
 
 % === Win from List ===
-	
+%true if all elements of list multiplied equal 24 (true if list contains 1, 2, 3 and 4)
+%winList(+List, +Counter)
 winList([] , 24).
 
 winList( [H|T] , Counter):-
@@ -62,7 +67,8 @@ winList( [H|T] , Counter):-
 	winList( T , Counter1).
 
 % === Checks if piece is valid in row===
-
+%true if row doesn't contain oponent equivalent of Piece
+%pieceCheckC(+Board, +Y, +Piece)
 pieceCheckR(Board , Y , Piece):-
 	Piece>5,
 	Piece1 is Piece-5,
@@ -78,7 +84,8 @@ pieceCheckRAux(Board, Y, Piece):-
 	\+member(Piece, Row).
 
 % === Checks if piece is valid in column ===
-
+%true if column doesn't contain oponent equivalent of Piece
+%pieceCheckC(+Board, +X, +Piece)
 pieceCheckC(Board , X , Piece):-
 	Piece>5,
 	Piece1 is Piece-5,
@@ -94,6 +101,8 @@ pieceCheckCAux(Board, X, Piece):-
 	nth1(X,Board1,Column),
 	\+member(Piece, Column).
 
+%true if list doesn't contain oponent equivalent of Piece
+%pieceCheck(+List, +Piece)
 pieceCheck(List , Piece):-
 	Piece>5,
 	Piece1 is Piece-5,
@@ -105,6 +114,8 @@ pieceCheck(List , Piece):-
 	\+member(Piece1, List).
 
 % === checks if move is valid ===
+%true if cell(X,Y) contains number 0 (if it's empty)
+%validMove(+X, +Y, +List)
 validMove(X , Y , List):-
 	isEmptyCell(X , Y , List).
 
@@ -117,9 +128,11 @@ isEmptyCell(X , Y , List):-
 	nth1(X,NewList,0).	
 
 % === checks if piece is valid 
+%validPiece(+Piece, +AvailablePieces)
 validPiece(Piece,List):- 
 	member(Piece,List).
 
+%pieceRuleValidation(+Board, +X, +Y, +Piece)
 pieceRuleValidation(Board , X , Y , Piece):-
 	pieceCheckR(Board , Y , Piece),
 	pieceCheckC(Board , X , Piece),
@@ -127,12 +140,14 @@ pieceRuleValidation(Board , X , Y , Piece):-
 	pieceCheck(List, Piece).
 
 % === removes piece from available pieces === 
+%removePiece(+Piece, +Pieces, -NewPieces)
 removePiece(Piece, List , List1):-
 	append(La,[Piece|Lb],List),  
 	append(La,Lb,List1)
 	,!.
 
 % === ask for piece ===
+%getPiece(-Piece, +AvailablePieces)
 getPiece(Piece , AvailablePieces):-
 	showPieces(AvailablePieces),
 	write('\n Choose a piece (INT)\n'),
@@ -142,43 +157,47 @@ getPiece(Piece , AvailablePieces):-
 	validPiece(Piece , AvailablePieces ).
 
 %===  functions to insert piece in board ===
-
+%replace(+Board, +X, +Y, +Piece, -NewBoard)
 replace([B|Bt] , X , 1 , Piece, [N|Bt]):-
-	replace_column(B, X , Piece , N),!.
+	replace_row(B, X , Piece , N),!.
 
 replace([B|Bt] , X, Y , Piece , [B|Nt]):-
 	Y>1,
 	Y1 is Y - 1,
 	replace(Bt, X , Y1 , Piece, Nt).
 
-replace_column( [_|Cs] , 1 , Piece , [Piece|Cs]) .
+%replace_row(+Row, +X, +Piece, -NewRow)
+replace_row( [_|Cs] , 1 , Piece , [Piece|Cs]) .
 
-replace_column( [C|Cs] , X , Piece , [C|Ct] ) :- 
+replace_row( [C|Cs] , X , Piece , [C|Ct] ) :- 
 	X>1,
   	X1 is X-1 ,                               
-  	replace_column( Cs , X1 , Piece , Ct ).                                          
+  	replace_row( Cs , X1 , Piece , Ct ).                                          
 
 
 % === function that gets the play ===
+%getPlay(+Board, -NewBoard, +AvailablePieces, -UpdatedPieces)
 getPlay(Board , NewBoard , AvailablePieces , UpdatedPieces):-
 	getCoord(X , Y , Board),
 	getPiece(Piece , AvailablePieces),
-	move( Board ,  _Player , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard).
+	move( Board, X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard).
 
+%finishMove(+Board, +X, +Y, +Piece, +AvailablePieces, -UpdatedPieces, -NewBoard):-
 finishMove(Board , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard):-
 	removePiece(Piece , AvailablePieces , UpdatedPieces),
 	replace(Board, X , Y, Piece, NewBoard).
 
-move( Board ,  _Player , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard):-
+%move(+Board, +X, +Y, +Piece, +AvailablePieces, -UpdatedPieces, -NewBoard):-
+move(Board, X, Y, Piece, AvailablePieces, UpdatedPieces, NewBoard):-
 	pieceRuleValidation(Board , X , Y , Piece),
 	!,
 	finishMove(Board , X , Y , Piece , AvailablePieces , UpdatedPieces , NewBoard).
 
-move( _Board ,  _Player , _X , _Y , _Piece , _AvailablePieces , _UpdatedPieces):-
+move(_Board, _X, _Y, _Piece, _AvailablePieces, _UpdatedPieces):-
 	write("\n Invalid Play\n").
 
 % === function that checks if player has won === 
-
+%checkWin(+Board, +X, +Y)
 checkWin(Board , _X , Y):- % win from row
 	nth1(Y,Board,Row),
 	winList(Row, 1).
@@ -192,6 +211,7 @@ checkWin(Board , X , Y):- % win from square
 	getSquare(Board,X,Y,List),
 	winList(List, 1).
 
+%game_over(+Board, +Counter, -NewCounter)
 game_over(Board,_Counter,NewCounter):-
 	checkWin(Board,1,1),
 	!,

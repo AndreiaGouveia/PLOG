@@ -2,24 +2,27 @@
 initialBoard(
                 [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]).
 
-piecesBlack(List,X):-
-        isEmpty(L),createPieces(L,X,1,List).
+%piecesBlack(-List, +X)
+piecesBlack(List, X):-
+        isEmpty(L),createPieces(L, X, 1, List).
 
-piecesWhite(List,X):-
-        isEmpty(L),createPieces(L,X,6,List).
+%piecesWhite(-List, +X)
+piecesWhite(List, X):-
+        isEmpty(L),createPieces(L, X, 6, List).
 
-createPieces(List,NumberOfRepetitions,Piece,New):-
+%createPieces(+List, +NumberOfRepetitions, +FirstPiece, -NewPieces)
+createPieces(List, NumberOfRepetitions, Piece, NewPieces):-
         length(List,L),
         L<(Piece mod 5)*NumberOfRepetitions,
         append(List, [Piece], NewList),
-        createPieces(NewList,NumberOfRepetitions,Piece,New).
+        createPieces(NewList,NumberOfRepetitions,Piece,NewPieces).
         
-createPieces(List,NumberOfRepetitions,Piece,New):-
+createPieces(List,NumberOfRepetitions,Piece,NewPieces):-
         length(List,L),
         L=:= (Piece mod 5)*NumberOfRepetitions,
         Piece mod 5 =\= 4,
         NewPiece is Piece+1,
-        createPieces(List,NumberOfRepetitions,NewPiece,New).
+        createPieces(List,NumberOfRepetitions,NewPiece,NewPieces).
 
 createPieces(List,NumberOfRepetitions,Piece,List):-
         length(List,L),
@@ -56,17 +59,19 @@ printBoard(Board):-
         printEmptyLine(X,0),
         printBoard(Board, 1).
 
-printTopBoard(X,X).
+%printTopBoard(+MaxIndex, +CurrentIndex)
+printTopBoard(MaxIndex,MaxIndex).
 
-printTopBoard(X,Y):-
-        X>Y,
-        LetterCode is Y+65,
-        Y1 is Y+1,
+printTopBoard(MaxIndex,CurrentIndex):-
+        MaxIndex>CurrentIndex,
+        LetterCode is CurrentIndex+65,
+        CurrentIndex1 is CurrentIndex+1,
         write('   '),
         char_code(LetterChar,LetterCode),
         write(LetterChar),
-        printTopBoard(X,Y1).
+        printTopBoard(MaxIndex,CurrentIndex1).
 
+%printEmptyLine(+CurrentIndex, +IsEmpty)
 printEmptyLine(0,_):- 
         write('|').
 
@@ -98,6 +103,7 @@ printEmptyLine(X,1):-
         X1 is X-1,
         printEmptyLine(X1,1).
 
+%printBoard(+Lines, +CurrentIndex)
 printBoard([],_):-
         nl,
         nl.
@@ -113,6 +119,7 @@ printBoard([H|T],Num):-
         Num2 is Num+1,
         printBoard(T,Num2).
 
+%printLine(+Line)
 printLine([]):-
         write(' |').
 
@@ -133,7 +140,7 @@ printLine([H|T]):-
         printLine(T).
 
 % Prints the pieces that are still available
-
+%printPieces(+ListOfPieces, +Counter, +CurrentPiece)
 printPieces([],Counter,CurrentPiece):-
         piece(CurrentPiece,Piece),
         write(Counter), write('*'),
@@ -155,7 +162,7 @@ printPieces([Code|Pieces],Counter,CurrentPiece):-
 
 isEmpty([]).
 
-showPieces(PlayerPieces ):-
+showPieces(PlayerPieces):-
         isEmpty(PlayerPieces),
         !,
         write('\n Error: there are no more available pieces :( \n').
