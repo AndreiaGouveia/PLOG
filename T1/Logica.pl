@@ -67,7 +67,7 @@ winList( [H|T] , Counter):-
 	winList( T , Counter1).
 
 % === Checks if piece is valid in row===
-%true if row doesn't contain oponent equivalent of Piece
+%true if row doesnt contain oponent equivalent of Piece
 %pieceCheckC(+Board, +Y, +Piece)
 pieceCheckR(Board , Y , Piece):-
 	Piece>5,
@@ -84,7 +84,7 @@ pieceCheckRAux(Board, Y, Piece):-
 	\+member(Piece, Row).
 
 % === Checks if piece is valid in column ===
-%true if column doesn't contain oponent equivalent of Piece
+%true if column doesnt contain oponent equivalent of Piece
 %pieceCheckC(+Board, +X, +Piece)
 pieceCheckC(Board , X , Piece):-
 	Piece>5,
@@ -101,7 +101,7 @@ pieceCheckCAux(Board, X, Piece):-
 	nth1(X,Board1,Column),
 	\+member(Piece, Column).
 
-%true if list doesn't contain oponent equivalent of Piece
+%true if list doesnt contain oponent equivalent of Piece
 %pieceCheck(+List, +Piece)
 pieceCheck(List , Piece):-
 	Piece>5,
@@ -114,7 +114,7 @@ pieceCheck(List , Piece):-
 	\+member(Piece1, List).
 
 % === checks if move is valid ===
-%true if cell(X,Y) contains number 0 (if it's empty)
+%true if cell(X,Y) contains number 0 (if its empty)
 %validMove(+X, +Y, +List)
 validMove(X , Y , List):-
 	isEmptyCell(X , Y , List).
@@ -197,7 +197,7 @@ move(_Board, _X, _Y, _Piece, _AvailablePieces, _UpdatedPieces):-
 	write("\n Invalid Play\n").
 
 % === function that checks if player has won === 
-%checkWin(+Board, +X, +Y)
+% checkWin(+Board, +X, +Y)
 checkWin(Board , _X , Y):- % win from row
 	nth1(Y,Board,Row),
 	winList(Row, 1).
@@ -211,7 +211,7 @@ checkWin(Board , X , Y):- % win from square
 	getSquare(Board,X,Y,List),
 	winList(List, 1).
 
-%game_over(+Board, +Counter, -NewCounter)
+% game_over(+Board, +Counter, -NewCounter)
 game_over(Board,_Counter,NewCounter):-
 	checkWin(Board,1,1),
 	!,
@@ -225,7 +225,7 @@ game_over(Board,_Counter,NewCounter):-
 	write('\n You won! \n').
 
 game_over(Board,_Counter,NewCounter):-
-	checkWin(Board,3,2),
+	checkWin(Board,3,2), 
 	!,
 	NewCounter is 15,
 	write('\n You won! \n').
