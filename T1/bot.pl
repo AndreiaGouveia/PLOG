@@ -123,17 +123,20 @@ checkLines([H|T] , Counter , FinalValue):-
     % write('alive'),
     checkLines(T , Result , FinalValue).
 
-value(NewBoard , Value):-
-    checkLines(NewBoard , 0 , Counter),
-    /*write('\nVALUE ROWS : '),
-    write(Counter),*/
-    transpose(NewBoard , TransposedBoard),
+value(Board , Value):-
+    %lines
+    checkLines(Board , 0 , Counter),
+    %rows
+    transpose(Board , TransposedBoard),
     checkLines(TransposedBoard , 0 , Counter1),
-    /*write('\nVALUE COLUMS : '),
-    write(Counter1),*/
-    atributeBigger(Counter , Counter1 , Value).
-   /* write('\nFINAL VALUE : '),
-    write(Counter).*/
+    atributeBigger(Counter , Counter1 , Value1),
+    %squares
+    getSquare(Board,1,1,List1),
+    getSquare(Board,4,4,List2),
+    getSquare(Board,2,3,List3),
+    getSquare(Board,3,2,List4),
+    checkLines([List1,List2,List3,List4] , 0 , Counter2),
+    atributeBigger(Value1 , Counter2 , Value).
 
 atributeBigger(Rows , Colums , Rows):-
     Rows>=Colums,
