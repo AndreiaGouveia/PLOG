@@ -6,4 +6,4 @@
 :- use_module(library(lists)).
 :- use_module(library(random)).
 
-quantik:- menus.
+play:- menus.
