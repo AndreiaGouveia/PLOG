@@ -1,6 +1,6 @@
 menus:- % First Menu
         repeat,
-      %  displayMainMenu,
+        displayMainMenu,
         nl,
         read_line([H|T]),
         length(T,0),
@@ -16,7 +16,7 @@ menuChoice(1):- % start game
         piecesBlack(BlackPieces,X1),
         piecesWhite(WhitePieces,X1),
         repeat,
-      %  displayGameMenu,
+        displayGameMenu,
         nl,
         read_line([H|T]),
         length(T,0),
@@ -43,8 +43,10 @@ menuChoice(_):- % invalid input
 
 % ========== Init game option ==================
 gameChoice(1 , InitialBoard , BlackPieces , WhitePieces):- personVSperson(white,InitialBoard , 0, WhitePieces , BlackPieces) , menus. % person vs person
-gameChoice(2 , InitialBoard , BlackPieces , WhitePieces):- personVSpc(player,InitialBoard , 0 , WhitePieces, BlackPieces) , menus. % person vs pc
-gameChoice(3 , InitialBoard , BlackPieces , WhitePieces):-  pcVSpc(pc1,InitialBoard, 0 , WhitePieces , BlackPieces) , menus. % pc vs pc
+gameChoice(2 , InitialBoard , BlackPieces , WhitePieces):- personVSpc(0,player,InitialBoard , 0 , WhitePieces, BlackPieces) , menus. % person vs pc (easy)
+gameChoice(3 , InitialBoard , BlackPieces , WhitePieces):-  personVSpc(1,player,InitialBoard, 0 , WhitePieces , BlackPieces) , menus. % person vs pc (hard)
+gameChoice(4 , InitialBoard , BlackPieces , WhitePieces):-  pcVSpc(0,pc1,InitialBoard, 0 , WhitePieces , BlackPieces) , menus. % pc vs pc (easy)
+gameChoice(5 , InitialBoard , BlackPieces , WhitePieces):-  pcVSpc(1,pc1,InitialBoard, 0 , WhitePieces , BlackPieces) , menus. % pc vs pc (hard)
 gameChoice(_ , _InitialBoard , _BlackPieces , _WhitePieces):- menuChoice(1). % invalid input
 
 % ============= Menus Display =====================
@@ -70,12 +72,13 @@ displayGameMenu:-
         write('|                   Quantik                  |\n'),
         write('|                                            |\n'),
         write('|                                            |\n'),
+        write('|    Options:                                |\n'),
         write('|                                            |\n'),
-        write('|         Options:                           |\n'),
-        write('|                    1- Person vs Person     |\n'),
-        write('|                    2- Computer vs Person   |\n'),
-        write('|                    3- Computer vs Computer |\n'),
-        write('|                                            |\n'),
+        write('|             1- Person vs Person            |\n'),
+        write('|             2- Computer vs Person (Easy)   |\n'),
+        write('|             3- Computer vs Person (Hard)   |\n'),
+        write('|             4- Computer vs Computer (Easy) |\n'),
+        write('|             5- Computer vs Computer (Hard) |\n'),
         write('|                                            |\n'),
         write(' --------------------------------------------\n').
 

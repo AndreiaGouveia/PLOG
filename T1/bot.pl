@@ -1,71 +1,66 @@
 :- use_module(library(lists)).
 
 % === obtenção das jogadas validas ===
-isEmptyMoves([]).
 
-valid_moves(Board, ListOfMoves, AvailablePieces , Piece ,Counter):-
-    nth1(Counter,AvailablePieces,Piece),
-    findall(V-X-Y, (pieceRuleValidation(Board , X , Y , Piece),value(Board , V)), ListOfMoves),
-    isEmptyMoves(ListOfMoves),
-    !,
-    Counter1 is Counter + 1,
-    valid_moves(Board , ListOfMoves , AvailablePieces , Piece , Counter1).
+printL([]).%//TODO TEMP
+printL([H|T]):-
+    write(H),nl,printL(T).
 
-valid_moves(Board, ListOfMoves, AvailablePieces , Piece , Counter):-
-    nth1(Counter,AvailablePieces,Piece),
-    findall(V-X-Y, (pieceRuleValidation(Board , X , Y , Piece),value(Board , V)), ListOfMoves),
-    write('\nList of moves: '),
-    write(ListOfMoves),
-    nl.
+valid_moves(_Board, ListOfMoves, Pieces , FinalList):-
+    isEmpty(Pieces),
+    printL(ListOfMoves),
+    copy(ListOfMoves,FinalList).
+
+valid_moves(Board, ListOfMoves, [Piece|T] , FinalList):-
+    findall(V-X-Y-Piece, (pieceRuleValidation(Board , X , Y , Piece),finishMove(Board , X , Y , Piece , [Piece|T] , _NewPieces , NewBoard),value(NewBoard , V)), List),
+    append(ListOfMoves, List, NewList),
+    valid_moves(Board , NewList , T , FinalList).
 
 % == getBest Value
-getfirstelement([H|T], H).
-getValue(V-X-Y , V).
+getfirstelement([H|_T], H).
+getValue(V-_X-_Y-_Piece , V).
 
-bestMove([] , Move).
+bestMove([] , Move, Move).
 
-bestMove([H|T], Move ):-
+bestMove([H|T], Move, BestMove):-
     getValue(H ,Value),
     getValue(Move , Value2),
     Value > Value2, % if new move is better than the last
     !,
-    bestMove(T , H).
+    bestMove(T , H, BestMove).
 
-bestMove([H|T] , Move):-
-    bestMove(T , Move).
+bestMove([_H|T] , Move, BestMove):-
+    bestMove(T , Move, BestMove).
 
-getBestMove(List , Move):-
+getBestMove(List , Move, BestMove):-
     getfirstelement(List, Move),
-    bestMove(List , Move).
+    bestMove(List , Move, BestMove).
 
 % === get move
-getMove(V-X-Y, X , Y).
+getMove(_V-X-Y-Piece, X , Y, Piece).
 
 
 %     RANDOM
-choose_move(_Board , 0 , _X , _Y , _Value, []):-
+choose_move(_Board , 0 , _X , _Y , _Piece, []):-
     write('\n ---- No available moves ----').
 
-choose_move(Board , 0 , X , Y , Value , [H|T]):-
-    getMove(H , X , Y ),
+choose_move(Board , 0 , X , Y, Piece, ListOfMoves):-
+    random_select(Elem,ListOfMoves,_),
+    getMove(Elem , X , Y , Piece),
     validMove(X , Y , Board),
     !,
     write('\nx: '),
     write(X),
     write('\ny: '),
     write(Y).
-
-choose_move(Board , 0 , X , Y , Value, [_H|T]):-
-    choose_move(Board , 0 , X , Y , Value, T).
-
 
 %       WITH VALUE
-choose_move(_Board , 1 , _X , _Y , _Value, []):-
+choose_move(_Board , 1 , _X , _Y, _Piece, []):-
     write('\n ---- No available moves ----').
 
-choose_move(Board , 1 , X , Y , Value , List):-
-    getBestMove( List , Move),
-    getMove(Move , X , Y ),
+choose_move(Board , 1 , X , Y, Piece, List):-
+    getBestMove( List , _Move, BestMove),
+    getMove(BestMove , X , Y , Piece),
     validMove(X , Y , Board),
     !,
     write('\nx: '),
@@ -73,8 +68,8 @@ choose_move(Board , 1 , X , Y , Value , List):-
     write('\ny: '),
     write(Y).
 
-choose_move(Board , 1 , X , Y , Value, [_H|T]):-
-    choose_move(Board , 1 , X , Y , Value, T).
+choose_move(Board , UseValue , X , Y, Piece, [_H|T]):-
+    choose_move(Board , UseValue , X , Y, Piece, T).
 
 
 % ==== VALUE FUNCTIONS ===
@@ -85,9 +80,7 @@ list_sum([Head | Tail], TotalSum) :-
     TotalSum is Count1 + Sum1.
 
 
-copy(L,R) :- accCp(L,R). % function to copy lists
-accCp([],[]).
-accCp([H|T1],[H|T2]) :- accCp(T1,T2).
+copy(L,R) :- append(L,[],R). % function to copy lists
 
 are_identical(X, Y) :- % sees if 2 elements are identical
     X == Y.
@@ -98,17 +91,17 @@ filterList(Elem, List, Number) :- % sees how many 0s
    /* write('\nLength: '),
     write(Number).*/
 
-atributeValue(_Line, 0 , 4):- !. % if row if full
+atributeValue(_Line, 15 , 4):- !. % if row if full - best option
 atributeValue(_Line, 5 , 1):- !. % missing 3 piece - middle option
 
-atributeValue(Line, 1 , 2):- % missing 2 pieces - worst option
+atributeValue(Line, 6 , 2):- % missing 2 pieces - middle option
     list_sum(Line , Sum),
     /*write('\nSum2: '),
     write(Sum),*/
     member(Sum , [3,4,5,6,7]), % if not, play is not smart
     !.
 
-atributeValue(Line, 10 , 3):- % missing 1 pieces - best option
+atributeValue(Line, 1 , 3):- % missing 1 pieces - worst option
     list_sum(Line , Sum),
     /*write('\nSum3: '),
     write(Sum),*/
@@ -116,11 +109,10 @@ atributeValue(Line, 10 , 3):- % missing 1 pieces - best option
     !.
 atributeValue(_Line, 5 , 0):- !. % if row is isEmpty
 
-atributeValue(Line , 0 , Counter). % if anything else
+atributeValue(_Line , 0 , _Counter). % if anything else
 
 checkLine(Line , Value):-
-    copy(Line, TempList),
-    filterList(0 , TempList , ZeroCounter),
+    filterList(0 , Line , ZeroCounter),
     atributeValue( Line , Value , ZeroCounter).
 
 checkLines([] , Counter , Counter).
