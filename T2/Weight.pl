@@ -58,7 +58,8 @@ analiseRest([H|T], Temp ,List):-
 	analiseRest(T , NL2, List).
 
 analiseRest([H|T], Temp ,List):-
-	append(Temp , ['X'] , NL),
+	append(Temp, ['(',H,'x'], List1),
+	append(List1 , ['X',')'] , NL),
 	analiseRest(T , NL, List).
 
 readSub([H|T], Temp ,NL3):-
@@ -79,8 +80,9 @@ displayResult([H|T] , List, FinalList):-
 	displayResult(T, List1 , FinalList).
 
 displayResult([H|T] , List, FinalList):-
-	append(List,['X'], List1),
-	displayResult(T, List1 , FinalList).
+	append(List, ['(',H,'x'], List1),
+	append(List1,['X', ')'], List2),
+	displayResult(T, List2 , FinalList).
 
 conversion(X , R):-
 	dist(X,Lista),
