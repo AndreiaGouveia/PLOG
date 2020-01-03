@@ -46,6 +46,18 @@ multiply(Dist,[H|Weights],Total):-
 	multiply(Dist,Weights,AuxTotal),
 	Total #= AuxTotal + Dist * H.
 
+rmComma([]).
+rmComma([H|T]):-
+	H == ')',
+	!,
+	write(H),
+	write(','),
+	rmComma(T).
+
+rmComma([H|T]):-
+	write(H),
+	rmComma(T).
+
 %%%%%%%%%%%%%  Display Section %%%%%%%%%%%%%%%%%%
 getSecondElement([H|T] , T).
 
@@ -58,7 +70,7 @@ analiseRest([H|T], Temp ,List):-
 	analiseRest(T , NL2, List).
 
 analiseRest([H|T], Temp ,List):-
-	append(Temp, ['(',H,'x'], List1),
+	append(Temp, ['(','(',H,')'], List1),
 	append(List1 , ['X',')'] , NL),
 	analiseRest(T , NL, List).
 
@@ -80,7 +92,7 @@ displayResult([H|T] , List, FinalList):-
 	displayResult(T, List1 , FinalList).
 
 displayResult([H|T] , List, FinalList):-
-	append(List, ['(',H,'x'], List1),
+	append(List, ['(','(',H,')'], List1),
 	append(List1,['X', ')'], List2),
 	displayResult(T, List2 , FinalList).
 
@@ -103,11 +115,11 @@ showResult([H|T], Result , [H|N]):-
 display(X,R):-
 	write('>>Puzzle escolhido:'),
 	conversion(X,Lista),
-	write(Lista),
+	rmComma(Lista),
 	nl,
 	write('>>Numero de elementos:'),
 	write(X),
 	nl,
 	write('>>Solucao:'),
 	showResult(Lista , R , Final),
-	write(Final).
+	rmComma(Final).
