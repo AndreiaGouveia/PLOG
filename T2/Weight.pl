@@ -5,17 +5,25 @@
 %for sublist, first element is position, second element is number of weights
 dist(5,[-3,-1,[2,3,-2,-1,1]]).%5 elements
 dist(6,[-3,-2,[1,3,[-1,2,-3,1],1],2]).%6 elements
+dist(7,[[-3,4,-3,-2,-1,2],[3,2,-2,1],5]).%7 elements
+dist(8,[[-1,4,[-1,3,-2,-1,1],2],[1,4,-3,-2,-1,2]]).%8 elements
+dist(9,[-3,-2,[-1,5,[-2,2,-2,1],[1,2,-1,3],2],2,4]).%9 elements
 dist(10,[[-1,5,[-1,4,[-1,3,-1,1,2],3],2],[1,3,-2,1,2],[2,2,-2,3]]).%10 elements
 dist(14,[[-2,3,-2,-1,5],[1,11,[-1,9,[-1,7,-2,-1,[1,5,[-1,3,-2,[1,2,-1,2]],1,2]],1,2],1,3]]).%14
 dist(19,[[-2,8,-3,-1,[1,6,[-1,4,-2,-1,[1,2,-1,2]],1,2]],1,[2,10,-3,-1,[1,8,[-1,5,[-3,2,-1,2],-2,-1,1],[1,3,-2,-1,1]]]]).%19
 dist(20,[[-4,3,-3,-2,3],[-2,7,-2,-1,[1,5,[-1,3,-1,2,3],1,2]],1,[3,9,[-1,7,[-1,5,-1,[1,2,-2,1],2,3],1,2],1,2]]).%20
 
-weight(X):-dist(X,List),game(X,List,R) , display(X,R). % X=5,6,10,14,19 or 20
+weight(X):-dist(X,List),game(X,List,Weights) , display(X,Weights). % X=5,6,10,14,19 or 20
 game(Size,Distances,Weights):-
+
+	%Variaveis de restricao
 	length(Weights, Size),
     domain(Weights,1,Size),
+	%restricao
 	all_distinct(Weights),
+	%Funcao de avaliacao
 	sumWeights(Distances, Weights, 0),
+	%Labeling
     labeling([], Weights).
 
 sumWeights([],[],0).
@@ -46,6 +54,8 @@ multiply(Dist,[H|Weights],Total):-
 	multiply(Dist,Weights,AuxTotal),
 	Total #= AuxTotal + Dist * H.
 
+%%%%%%%%%%%%%  Display Section %%%%%%%%%%%%%%%%%%
+
 rmComma([]).
 rmComma([H|T]):-
 	H == ')',
@@ -58,7 +68,6 @@ rmComma([H|T]):-
 	write(H),
 	rmComma(T).
 
-%%%%%%%%%%%%%  Display Section %%%%%%%%%%%%%%%%%%
 getSecondElement([H|T] , T , H).
 
 readSub([H|T], Temp ,NL3):-
@@ -111,3 +120,12 @@ display(X,R):-
 	write('>>Solucao:'),
 	showResult(Lista , R , Final),
 	rmComma(Final).
+
+test(X):-
+	dist(X,List),game(X,List,R).
+
+getTime(X):-
+   statistics(walltime, [TimeSinceStart | [TimeSinceLastCall]]),
+   test(X),
+   statistics(walltime, [NewTimeSinceStart | [ExecutionTime]]),
+   write('Execution took '), write(ExecutionTime), write(' ms.'), nl.
