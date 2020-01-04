@@ -59,7 +59,7 @@ rmComma([H|T]):-
 	rmComma(T).
 
 %%%%%%%%%%%%%  Display Section %%%%%%%%%%%%%%%%%%
-getSecondElement([H|T] , T).
+getSecondElement([H|T] , T , H).
 
 analiseRest([], List , List).
 analiseRest([H|T], Temp ,List):-
@@ -75,10 +75,11 @@ analiseRest([H|T], Temp ,List):-
 	analiseRest(T , NL, List).
 
 readSub([H|T], Temp ,NL3):-
-	append(Temp , ['['] , NL ),
-	getSecondElement(T, NL1),
+	append(Temp , ['[','{',H,','] , NL ),
+	getSecondElement(T, NL1 , Elem),
+	append(NL , [Elem,'}'] , NL4 ),
 	analiseRest(NL1, Temp, List),
-	append(NL , List ,NL2),
+	append(NL4 , List ,NL2),
 	append(NL2 , [']'] , NL3).
 
 
