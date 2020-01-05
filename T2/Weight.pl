@@ -6,6 +6,9 @@
 dist(3,[-2,-1,7]).
 dist(5,[-3,-1,[2,3,-2,-1,1]]).%5 elements
 dist(6,[-3,-2,[1,3,[-1,2,-3,1],1],2]).%6 elements
+dist(7,[[-3,4,-3,-2,-1,2],[3,2,-2,1],5]).%7 elements
+dist(8,[[-1,4,[-1,3,-2,-1,1],2],[1,4,-3,-2,-1,2]]).%8 elements
+dist(9,[-3,-2,[-1,5,[-2,2,-2,1],[1,2,-1,3],2],2,4]).%9 elements
 dist(10,[[-1,5,[-1,4,[-1,3,-1,1,2],3],2],[1,3,-2,1,2],[2,2,-2,3]]).%10 elements
 dist(14,[[-2,3,-2,-1,5],[1,11,[-1,9,[-1,7,-2,-1,[1,5,[-1,3,-2,[1,2,-1,2]],1,2]],1,2],1,3]]).%14
 dist(19,[[-2,8,-3,-1,[1,6,[-1,4,-2,-1,[1,2,-1,2]],1,2]],1,[2,10,-3,-1,[1,8,[-1,5,[-3,2,-1,2],-2,-1,1],[1,3,-2,-1,1]]]]).%19
@@ -15,10 +18,14 @@ dist(20,[[-4,3,-3,-2,3],[-2,7,-2,-1,[1,5,[-1,3,-1,2,3],1,2]],1,[3,9,[-1,7,[-1,5,
 weight(X):-dist(X,List),game(X,List,R),
 write('Distances: '),write(List),nl,write('Weights: '),write(R),nl,display(List,R,[],[]). % X=5,6,10,14,19 or 20
 game(Size,Distances,Weights):-
+	%Variaveis de decisao
 	length(Weights, Size),
     domain(Weights,1,Size),
+	%Restricoes
 	all_distinct(Weights),
+	%Funcao de avalicao
 	sumWeights(Distances, Weights, 0),
+	%Labelling
     labeling([], Weights).
 
 sumWeights([],[],0).
@@ -121,3 +128,15 @@ generate(X,Y):-
 	game2(X,Y,Distances,Weights),
 	write('Distances: '),write(Distances),nl,write('Weights: '),write(Weights),
 	nl,display(Distances,Weights,[],[]).
+
+
+% time tests
+
+test(X):-
+	dist(X,List),game(X,List,R).
+
+getTime(X):-
+   statistics(walltime, [TimeSinceStart | [TimeSinceLastCall]]),
+   test(X),
+   statistics(walltime, [NewTimeSinceStart | [ExecutionTime]]),
+   write('Execution took '), write(ExecutionTime), write(' ms.'), nl.
