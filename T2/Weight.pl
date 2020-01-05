@@ -3,6 +3,7 @@
 :- use_module(library(clpfd)).
 
 %for sublist, first element is position, second element is number of weights
+dist(3,[-2,-1,7]).
 dist(5,[-3,-1,[2,3,-2,-1,1]]).%5 elements
 dist(6,[-3,-2,[1,3,[-1,2,-3,1],1],2]).%6 elements
 dist(7,[[-3,4,-3,-2,-1,2],[3,2,-2,1],5]).%7 elements
@@ -13,17 +14,14 @@ dist(14,[[-2,3,-2,-1,5],[1,11,[-1,9,[-1,7,-2,-1,[1,5,[-1,3,-2,[1,2,-1,2]],1,2]],
 dist(19,[[-2,8,-3,-1,[1,6,[-1,4,-2,-1,[1,2,-1,2]],1,2]],1,[2,10,-3,-1,[1,8,[-1,5,[-3,2,-1,2],-2,-1,1],[1,3,-2,-1,1]]]]).%19
 dist(20,[[-4,3,-3,-2,3],[-2,7,-2,-1,[1,5,[-1,3,-1,2,3],1,2]],1,[3,9,[-1,7,[-1,5,-1,[1,2,-2,1],2,3],1,2],1,2]]).%20
 
-weight(X):-dist(X,List),game(X,List,Weights) , display(X,Weights). % X=5,6,10,14,19 or 20
-game(Size,Distances,Weights):-
 
-	%Variaveis de restricao
+weight(X):-dist(X,List),game(X,List,R),
+write('Distances: '),write(List),nl,write('Weights: '),write(R),nl,display(List,R,[],[]). % X=5,6,10,14,19 or 20
+game(Size,Distances,Weights):-
 	length(Weights, Size),
     domain(Weights,1,Size),
-	%restricao
 	all_distinct(Weights),
-	%Funcao de avaliacao
 	sumWeights(Distances, Weights, 0),
-	%Labeling
     labeling([], Weights).
 
 sumWeights([],[],0).
@@ -54,72 +52,45 @@ multiply(Dist,[H|Weights],Total):-
 	multiply(Dist,Weights,AuxTotal),
 	Total #= AuxTotal + Dist * H.
 
-%%%%%%%%%%%%%  Display Section %%%%%%%%%%%%%%%%%%
 
-rmComma([]).
-rmComma([H|T]):-
-	H == ')',
-	!,
-	write(H),
-	write(','),
-	rmComma(T).
+%display
 
-rmComma([H|T]):-
-	write(H),
-	rmComma(T).
+isEmpty([]).
 
-getSecondElement([H|T] , T , H).
-
-readSub([H|T], Temp ,NL3):-
-	append(Temp , ['[','{',H,','] , NL ),
-	getSecondElement(T, NL1 , Elem),
-	append(NL , [Elem,'}'] , NL4 ),
-	displayResult(NL1, Temp, List),
-	append(NL4 , List ,NL2),
-	append(NL2 , [']'] , NL3).
+printSum([T]):- write(T).
+printSum([H|T]):-
+	write(H), write(' + '), printSum(T).
 
 
-displayResult([] , FinalList, FinalList).
+display( [[H1,H2|H3]|H] ,P,Aux1,Aux2):-
+	\+isEmpty(H),
+	first_n(H2, P, AuxList),
+	append(AuxList, RestP, P),
+	append(Aux2, [AuxList], NewAux2),
+	append(Aux1, [H3], NewAux1),
+	write(H1),write(' * ('),printSum(AuxList),write(') + '),display(H,RestP,NewAux1,NewAux2).
 
-displayResult([H|T] , List, FinalList):-
-	is_list(H),
-	!,
-	readSub( H , [] ,Something),
-	append(List , Something , List1),
-	displayResult(T, List1 , FinalList).
+display( [[H1,H2|H3]|H] ,P,Aux1,Aux2):-
+	isEmpty(H),
+	first_n(H2, P, AuxList),
+	append(AuxList, [], P),
+	append(Aux2, [AuxList], NewAux2),
+	append(Aux1, [H3], NewAux1),
+	write(H1),write(' * ('),printSum(AuxList),write(') = 0'),nl,display2(NewAux1,NewAux2).
+	
+display([H1|H2],[P1|P2],Aux,Aux2):-
+	\+isEmpty(H2),
+	write(H1),write(' * '),write(P1),write(' + '),
+	display(H2,P2,Aux,Aux2).
 
-displayResult([H|T] , List, FinalList):-
-	append(List, ['(','(',H,')'], List1),
-	append(List1,['X', ')'], List2),
-	displayResult(T, List2 , FinalList).
+display([H1],[P1],Aux1,Aux2):-
+	write(H1),write(' * '),write(P1),write(' = 0'),nl,display2(Aux1,Aux2).
 
-conversion(X , R):-
-	dist(X,Lista),
-	displayResult(Lista , [] ,R).
+display2([],[]).
 
-showResult([] , [] , []).
-
-showResult([H|T] , [H1|T1] , [H1|N]):-
-	H == 'X',
-	!,
-	showResult(T , T1 , N).
-
-showResult([H|T], Result , [H|N]):-
-	showResult(T , Result , N).
-
-
-
-display(X,R):-
-	write('>>Puzzle escolhido:'),
-	conversion(X,Lista),
-	rmComma(Lista),
-	nl,
-	write('>>Numero de elementos:'),
-	write(X),
-	nl,
-	write('>>Solucao:'),
-	showResult(Lista , R , Final),
-	rmComma(Final).
+display2([Aux1|T],[Aux2|T1]):-
+	display(Aux1,Aux2,T,T1).
+% time tests
 
 test(X):-
 	dist(X,List),game(X,List,R).
