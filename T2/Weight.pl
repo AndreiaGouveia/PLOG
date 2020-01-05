@@ -23,6 +23,10 @@ game(Size,Distances,Weights):-
 
 sumWeights([],[],0).
 
+sumWeights([H1|Distances],[H2|Weights],Acumulator):-%if H1 is not list
+	\+ is_list(H1),
+	sumWeights(Distances,Weights,AuxAcumulator),
+	Acumulator #= H1 * H2 + AuxAcumulator.
 sumWeights([[Position,NumWeights|ListDistAux]|Distances],Weights,Acumulator):-%if first element of Distances is list
 	first_n(NumWeights,Weights,FirstWeights),
 	sumWeights(ListDistAux,FirstWeights,0),
@@ -31,10 +35,6 @@ sumWeights([[Position,NumWeights|ListDistAux]|Distances],Weights,Acumulator):-%i
 	sumWeights(Distances,RestWeights,AuxAcumulator),
 	Acumulator #= Total + AuxAcumulator.
 
-sumWeights([H1|Distances],[H2|Weights],Acumulator):-%if H1 is not list
-	\+ is_list(H1),
-	sumWeights(Distances,Weights,AuxAcumulator),
-	Acumulator #= H1 * H2 + AuxAcumulator.
 
 %first_n(0,_,[]).
 %first_n(N, [H|T], [H|T1]) :- N > 0, N1 is N-1, first_n(N1, T, T1).
@@ -73,7 +73,7 @@ display( [[H1,H2|H3]|H] ,P,Aux1,Aux2):-
 	append(AuxList, [], P),
 	append(Aux2, [AuxList], NewAux2),
 	append(Aux1, [H3], NewAux1),
-	write(H1),write(' * ('),auxS(AuxList),write(') = 0'),nl,display2(NewAux1,NewAux2).
+	write(H1),write(' * ('),printSum(AuxList),write(') = 0'),nl,display2(NewAux1,NewAux2).
 	
 display([H1|H2],[P1|P2],Aux,Aux2):-
 	\+isEmpty(H2),
@@ -87,3 +87,37 @@ display2([],[]).
 
 display2([Aux1|T],[Aux2|T1]):-
 	display(Aux1,Aux2,T,T1).
+
+game2(Size,N,Distances,Weights):-
+	length(Weights, Size),
+	length(Temp, Size),
+	domain(Weights,1,Size),
+    domain(Temp,-5,5),
+	all_distinct(Weights),
+	all_distinct(Temp),
+
+	game2Aux(N,Temp,Distances,Weights),
+	
+	sumWeights(Distances, Weights, 0),
+	append(Distances, Weights, NewList),
+    labeling([min], NewList).
+
+game2Aux(0,Temp,Temp,_Weights).
+game2Aux(N,Temp,Distances,Weights):-
+	N>1,N1 is N-1,
+	random_member(Elem, Temp),%select rest before and after of distances
+	
+	length(Weights,Size),
+	random(1, Size, X),%number of weights in subtree
+	first_n(X,Weights,NewWeights),
+	
+	random_subseq(Temp,SubList,Rest),
+	length(SubList,Size),
+	game2(N1,SubList,SubDist,NewWeights),
+	append([Elem,X], SubDist, SubDistFixed),
+	append(Rest, [SubDistFixed], Distances).
+
+generate(X,Y):-
+	game2(X,Y,Distances,Weights),
+	write('Distances: '),write(Distances),nl,write('Weights: '),write(Weights),
+	nl,display(Distances,Weights,[],[]).
