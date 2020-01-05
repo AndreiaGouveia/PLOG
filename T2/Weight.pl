@@ -3,7 +3,7 @@
 :- use_module(library(clpfd)).
 
 %for sublist, first element is position, second element is number of weights
-dist(3,[-2,-1,7]).
+dist(3,[-2,-1,7]).%3 elements
 dist(5,[-3,-1,[2,3,-2,-1,1]]).%5 elements
 dist(6,[-3,-2,[1,3,[-1,2,-3,1],1],2]).%6 elements
 dist(7,[[-3,4,-3,-2,-1,2],[3,2,-2,1],5]).%7 elements
