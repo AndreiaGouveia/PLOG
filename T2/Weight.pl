@@ -18,10 +18,14 @@ dist(20,[[-4,3,-3,-2,3],[-2,7,-2,-1,[1,5,[-1,3,-1,2,3],1,2]],1,[3,9,[-1,7,[-1,5,
 weight(X):-dist(X,List),game(X,List,R),
 write('Distances: '),write(List),nl,write('Weights: '),write(R),nl,display(List,R,[],[]). % X=5,6,10,14,19 or 20
 game(Size,Distances,Weights):-
+	%Variaveis de decisao
 	length(Weights, Size),
     domain(Weights,1,Size),
+	%Restricoes
 	all_distinct(Weights),
+	%Funcao de avalicao
 	sumWeights(Distances, Weights, 0),
+	%Labelling
     labeling([], Weights).
 
 sumWeights([],[],0).
@@ -100,3 +104,8 @@ getTime(X):-
    test(X),
    statistics(walltime, [NewTimeSinceStart | [ExecutionTime]]),
    write('Execution took '), write(ExecutionTime), write(' ms.'), nl.
+
+
+
+
+
