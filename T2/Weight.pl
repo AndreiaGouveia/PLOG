@@ -96,6 +96,7 @@ display2([Aux1|T],[Aux2|T1]):-
 	display(Aux1,Aux2,T,T1).
 
 game2(Size,N,Distances,Weights):-
+	Size>N*2,
 	length(Weights, Size),
 	length(Temp, Size),
 	domain(Weights,1,Size),
