@@ -106,21 +106,21 @@ game2(Size,N,Distances,Weights):-
 	game2Aux(N,Temp,Distances,Weights),
 	
 	sumWeights(Distances, Weights, 0),
-	append(Distances, Weights, NewList),
+	append(Temp, Weights, NewList),
     labeling([min], NewList).
 
 game2Aux(0,Temp,Temp,_Weights).
 game2Aux(N,Temp,Distances,Weights):-
-	N>1,N1 is N-1,
-	random_member(Elem, Temp),%select rest before and after of distances
-	
+	N>0,N1 is N-1,
+	random_member(Elem, Temp),
+	N2 is N*2,
 	length(Weights,Size),
-	random(1, Size, X),%number of weights in subtree
+	random(N2, Size, X),%number of weights in subtree
 	first_n(X,Weights,NewWeights),
-	
+	repeat,
 	random_subseq(Temp,SubList,Rest),
-	length(SubList,Size),
-	game2(N1,SubList,SubDist,NewWeights),
+	length(SubList,X),!,
+	game2Aux(N1,SubList,SubDist,NewWeights),
 	append([Elem,X], SubDist, SubDistFixed),
 	append(Rest, [SubDistFixed], Distances).
 
