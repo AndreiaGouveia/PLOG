@@ -6,7 +6,7 @@ Para obter a resolução de um dos puzzles:
 
 Para gerar um puzzle aleatório e obter a sua resolução:
 1. No sictus consultar o ficheiro 'weight.pl'.
-2. Chamar a função generate(X,Y), sendo x o nº de pesos e o y, o nº de sub-árvores. É de notar que x tem que ser maior que (y)^2.
+2. Chamar a função generate(X,Y), sendo x o nº de pesos e o y, o nº de sub-árvores. É de notar que x tem que ser maior que y*2.
 
 Para obter o tempo de execução de um puzzle:
 1. No sictus consultar o ficheiro 'weight.pl'.
